@@ -1,9 +1,5 @@
 package it.faerb.crond;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.lang.Process;
-
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -13,13 +9,16 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import java.io.IOException;
+import static it.faerb.crond.Util.CROND_LOG_FILE;
+import static it.faerb.crond.Util.CRONTAB_FILE;
+import static it.faerb.crond.Util.clearLogFile;
+import static it.faerb.crond.Util.displayFileContents;
+import static it.faerb.crond.Util.killCrond;
+import static it.faerb.crond.Util.startCrond;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String TAG = "crond.MainActivity";
-    private static final String CRONTAB_FILE = "/data/local/spool/cron/crontabs/root";
-    private static final String CROND_LOG_FILE = "/data/crond.log";
+    private static final String TAG = "MainActivity";
 
     private Handler refreshHandler = new Handler();
 
@@ -41,19 +40,17 @@ public class MainActivity extends AppCompatActivity {
         restartButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.i(TAG, executeCommand(
-                                "ps | grep \"root.*crond\" | awk '{print $2}' | xargs kill"));
-                Log.i(TAG, executeCommand(
-                        "crond -L " + CROND_LOG_FILE + " -l 4"));
+                killCrond();
+                startCrond();
                 refreshImmediately();
             }
         });
 
-        final Button emptyButton = (Button) findViewById(R.id.button_empty_log);
-        emptyButton.setOnClickListener(new View.OnClickListener() {
+        final Button clearButton = (Button) findViewById(R.id.button_clear_log);
+        clearButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.i(TAG, executeCommand("echo -n \"\" > " + CROND_LOG_FILE));
+                clearLogFile();
                 refreshImmediately();
             }
         });
@@ -92,31 +89,4 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    private String displayFileContents(String filePath) {
-        return executeCommand("cat " + filePath);
-    }
-
-    private String executeCommand(String command) {
-        return executeCommand(new String[]{"su", "-c", command, "-"});
-    }
-
-    private String executeCommand(String[] command) {
-        StringBuilder output = new StringBuilder();
-        try {
-            Process process = new ProcessBuilder()
-                    .command(command)
-                    .redirectErrorStream(true)
-                    .start();
-            BufferedReader bufferedReader = new BufferedReader(
-                    new InputStreamReader(process.getInputStream()));
-            String line;
-            while ((line = bufferedReader.readLine()) != null) {
-                output.append(line + "\n");
-            }
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-        return output.toString();
-    }
 }
