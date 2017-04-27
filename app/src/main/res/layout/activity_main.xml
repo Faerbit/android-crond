@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/text_label_crontab"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:text="crontab path: " />
+
+    <TextView
+        android:id="@+id/text_content_crontab"
+        android:layout_width="match_parent"
+        android:layout_height="0px"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:background="#eee"
+        android:layout_weight="0.5"
+        android:text="Crontab" />
+
+    <TextView
+        android:id="@+id/text_label_crond_log"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:text="crond log:" />
+
+    <TextView
+        android:id="@+id/text_content_crond"
+        android:layout_width="match_parent"
+        android:layout_height="0px"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:background="#eee"
+        android:layout_weight="0.5"
+        android:text="TextView" />
+
+    <Button
+        android:id="@+id/button_restart_crond"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="5dp"
+        android:text="Restart crond" />
+
+</LinearLayout>
