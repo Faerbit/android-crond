@@ -20,6 +20,7 @@
         android:layout_marginRight="5dp"
         android:background="#eee"
         android:layout_weight="0.5"
+        android:scrollbars="vertical"
         android:text="Crontab" />
 
     <TextView
@@ -38,6 +39,7 @@
         android:layout_marginRight="5dp"
         android:background="#eee"
         android:layout_weight="0.5"
+        android:scrollbars="vertical"
         android:text="TextView" />
 
     <Button
