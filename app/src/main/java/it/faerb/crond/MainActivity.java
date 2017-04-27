@@ -3,6 +3,8 @@ package it.faerb.crond;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.lang.Process;
+
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
@@ -19,6 +21,8 @@ public class MainActivity extends AppCompatActivity {
     private static final String CRONTAB_FILE = "/data/local/spool/cron/crontabs/root";
     private static final String CROND_LOG_FILE = "/data/crond.log";
 
+    private Handler refreshHandler = new Handler();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,11 +32,9 @@ public class MainActivity extends AppCompatActivity {
         crontabLabel.setText(String.format("crontab %s:", CRONTAB_FILE));
 
         final TextView crontabContent = (TextView) findViewById(R.id.text_content_crontab);
-        crontabContent.setText(displayFileContents(CRONTAB_FILE));
         crontabContent.setMovementMethod(new ScrollingMovementMethod());
 
         final TextView crondLog = (TextView) findViewById(R.id.text_content_crond);
-        crondLog.setText(displayFileContents(CROND_LOG_FILE));
         crondLog.setMovementMethod(new ScrollingMovementMethod());
 
         final Button restartButton = (Button) findViewById(R.id.button_restart_crond);
@@ -43,9 +45,43 @@ public class MainActivity extends AppCompatActivity {
                                 "ps | grep \"root.*crond\" | awk '{print $2}' | xargs kill"));
                 Log.i(TAG, executeCommand(
                         "crond -L /data/crond.log -l 7"));
+                refreshImmediately();
             }
         });
+
+        refreshHandler.post(refresh);
     }
+
+    @Override
+    public void onResume() {
+       super.onResume();
+        refreshHandler.post(refresh);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        refreshHandler.post(refresh);
+    }
+
+    private void refreshImmediately() {
+        refreshHandler.removeCallbacksAndMessages(null);
+        refreshHandler.post(refresh);
+    }
+
+
+
+    private final Runnable refresh = new Runnable() {
+        @Override
+        public void run() {
+            final TextView crontabContent = (TextView) findViewById(R.id.text_content_crontab);
+            crontabContent.setText(displayFileContents(CRONTAB_FILE));
+
+            final TextView crondLog = (TextView) findViewById(R.id.text_content_crond);
+            crondLog.setText(displayFileContents(CROND_LOG_FILE));
+            refreshHandler.postDelayed(refresh, 10000);
+        }
+    };
 
     private String displayFileContents(String filePath) {
         return executeCommand("cat " + filePath);
