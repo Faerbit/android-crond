@@ -44,7 +44,16 @@ public class MainActivity extends AppCompatActivity {
                 Log.i(TAG, executeCommand(
                                 "ps | grep \"root.*crond\" | awk '{print $2}' | xargs kill"));
                 Log.i(TAG, executeCommand(
-                        "crond -L /data/crond.log -l 7"));
+                        "crond -L " + CROND_LOG_FILE + " -l 4"));
+                refreshImmediately();
+            }
+        });
+
+        final Button emptyButton = (Button) findViewById(R.id.button_empty_log);
+        emptyButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.i(TAG, executeCommand("echo -n \"\" > " + CROND_LOG_FILE));
                 refreshImmediately();
             }
         });
@@ -61,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onPause() {
         super.onPause();
-        refreshHandler.post(refresh);
+        refreshHandler.removeCallbacksAndMessages(null);
     }
 
     private void refreshImmediately() {
