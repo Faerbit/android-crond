@@ -15,7 +15,7 @@ class Util {
 
     static void startCrond() {
         Log.i(TAG, executeCommand(
-                "crond -L " + CROND_LOG_FILE + " -l 4"));
+                "crond -L " + CROND_LOG_FILE + " -l 6"));
     }
 
     static void killCrond() {
