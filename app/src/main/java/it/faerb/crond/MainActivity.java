@@ -1,6 +1,8 @@
 package it.faerb.crond;
 
+import android.content.DialogInterface;
 import android.os.Handler;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
@@ -50,8 +52,18 @@ public class MainActivity extends AppCompatActivity {
         clearButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                clearLogFile();
-                refreshImmediately();
+                new AlertDialog.Builder(MainActivity.this)
+                        .setTitle(R.string.dialog_clean_title)
+                        .setMessage(R.string.dialog_clean_message)
+                        .setNegativeButton(R.string.no, null)
+                        .setPositiveButton(R.string.yes, new AlertDialog.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                clearLogFile();
+                                refreshImmediately();
+                            }
+                        })
+                        .show();
             }
         });
 

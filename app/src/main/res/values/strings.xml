@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">crond</string>
+    <string name="dialog_clean_title">Clear?</string>
+    <string name="dialog_clean_message">Are you sure you want to clean this?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="button_label_clear">Clear log</string>
+    <string name="button_label_restart">Restart crond</string>
 </resources>
