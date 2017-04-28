@@ -1,6 +1,7 @@
 package it.faerb.crond;
 
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -9,6 +10,7 @@ import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import static it.faerb.crond.Util.CROND_LOG_FILE;
@@ -21,6 +23,9 @@ import static it.faerb.crond.Util.startCrond;
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
+
+    static final String PREFERENCES_FILE = "preferences.conf";
+    static final String USE_ROOT_PREFERENCE = "use_root";
 
     private Handler refreshHandler = new Handler();
 
@@ -64,6 +69,18 @@ public class MainActivity extends AppCompatActivity {
                             }
                         })
                         .show();
+            }
+        });
+
+        final CheckBox rootCheck = (CheckBox) findViewById(R.id.check_root);
+        rootCheck.setChecked(getSharedPreferences(PREFERENCES_FILE, MODE_PRIVATE)
+                .getBoolean(USE_ROOT_PREFERENCE, false));
+        rootCheck.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getSharedPreferences(PREFERENCES_FILE, MODE_PRIVATE).edit()
+                        .putBoolean(USE_ROOT_PREFERENCE, rootCheck.isChecked())
+                        .apply();
             }
         });
 
