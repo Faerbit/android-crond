@@ -64,12 +64,12 @@
             android:layout_weight="0.5"
             android:text="@string/button_label_clear" />
         <Button
-            android:id="@+id/button_restart_crond"
+            android:id="@+id/button_schedule"
             android:layout_width="0px"
             android:layout_height="wrap_content"
             android:layout_marginBottom="5dp"
             android:layout_weight="0.5"
-            android:text="@string/button_label_restart" />
+            android:text="@string/button_label_schedule" />
     </LinearLayout>
 
 

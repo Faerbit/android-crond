@@ -5,6 +5,6 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="button_label_clear">Clear log</string>
-    <string name="button_label_restart">Restart crond</string>
+    <string name="button_label_schedule">Schedule Tasks</string>
     <string name="check_use_root">Use root</string>
 </resources>
