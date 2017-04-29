@@ -58,7 +58,7 @@ public class IO {
         Log.i(TAG, executeCommand("echo -n \"\" > " + getLogPath()));
     }
 
-    String displayFileContents(String filePath) {
+    String readFileContents(String filePath) {
         return executeCommand("cat " + filePath);
     }
 
@@ -81,7 +81,7 @@ public class IO {
                     new InputStreamReader(process.getInputStream()));
             String line;
             while ((line = bufferedReader.readLine()) != null) {
-                output.append(line + "\n");
+                output.append(line).append("\n");
             }
         }
         catch (IOException e) {

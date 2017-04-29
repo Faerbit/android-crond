@@ -1,10 +1,12 @@
 package it.faerb.crond;
 
 import android.content.DialogInterface;
+import android.os.Build;
 import android.os.Handler;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Html;
 import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.widget.Button;
@@ -21,12 +23,14 @@ public class MainActivity extends AppCompatActivity {
     private Handler refreshHandler = new Handler();
 
     private IO io = null;
+    private Crond crond = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         io = new IO(getApplicationContext());
+        crond = new Crond(getApplicationContext());
         reload();
     }
 
@@ -107,10 +111,11 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void run() {
             final TextView crontabContent = (TextView) findViewById(R.id.text_content_crontab);
-            crontabContent.setText(io.displayFileContents(io.getCrontabPath()));
+            String fileContent = io.readFileContents(io.getCrontabPath());
+            crontabContent.setText(crond.parseCrontab(fileContent));
 
             final TextView crondLog = (TextView) findViewById(R.id.text_content_crond);
-            crondLog.setText(io.displayFileContents(io.getLogPath()));
+            crondLog.setText(io.readFileContents(io.getLogPath()));
             refreshHandler.postDelayed(refresh, 10000);
         }
     };

@@ -7,4 +7,6 @@
     <string name="button_label_clear">Clear log</string>
     <string name="button_label_schedule">Schedule Tasks</string>
     <string name="check_use_root">Use root</string>
+    <string name="run">Run</string>
+    <string name="invalid_cron">Invalid cron expression</string>
 </resources>
