@@ -15,7 +15,6 @@ import com.cronutils.model.CronType;
 import com.cronutils.model.definition.CronDefinitionBuilder;
 import com.cronutils.parser.CronParser;
 
-import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Locale;
 
@@ -33,35 +32,29 @@ public class Crond {
         this.context = context;
     }
 
-    public SpannableStringBuilder parseCrontab(String crontab) {
+    public SpannableStringBuilder describeCrontab(String crontab) {
         SpannableStringBuilder ret = new SpannableStringBuilder();
        for (String line : crontab.split("\n")){
            ret.append(line + "\n",
                    new TypefaceSpan("monospace"), Spanned.SPAN_COMPOSING);
-           ret.append(parseLine(line));
+           ret.append(describeLine(line));
        }
        return ret;
     }
 
-    private SpannableStringBuilder parseLine(String line) {
+    private SpannableStringBuilder describeLine(String line) {
         SpannableStringBuilder ret = new SpannableStringBuilder();
-        line = line.trim();
-        if (line.charAt(0) != '*'
-                && !Character.isDigit(line.charAt(0))) {
+        ParsedLine parsedLine = parseLine(line);
+        if (parsedLine == null) {
             ret.append(context.getResources().getString(R.string.invalid_cron) + "\n",
                     new StyleSpan(Typeface.ITALIC), Spanned.SPAN_COMPOSING);
         }
         else {
-            String[] splitLine = line.split(" ");
-            String[] cronExpr = Arrays.copyOfRange(splitLine, 0, 5);
-            String[] runExpr = Arrays.copyOfRange(splitLine, 5, splitLine.length);
-            String joinedCronExpr = TextUtils.join(" ", cronExpr);
-            String joinedRunExpr = TextUtils.join(" ", runExpr);
             ret.append(context.getResources().getString(R.string.run) + " ",
                     new StyleSpan(Typeface.ITALIC), Spanned.SPAN_COMPOSING);
-            ret.append(joinedRunExpr + " ",
+            ret.append(parsedLine.runExpr + " ",
                     new TypefaceSpan("monospace"), Spanned.SPAN_COMPOSING);
-            ret.append(descriptor.describe(parser.parse(joinedCronExpr)) + "\n",
+            ret.append(descriptor.describe(parser.parse(parsedLine.cronExpr)) + "\n",
                     new StyleSpan(Typeface.ITALIC), Spanned.SPAN_COMPOSING);
         }
         if (Build.VERSION.SDK_INT < 23) {
@@ -75,6 +68,31 @@ public class Crond {
                     ret.length(), Spanned.SPAN_COMPOSING);
         }
         return ret;
+    }
 
+    private ParsedLine parseLine(String line) {
+        line = line.trim();
+        if (line.charAt(0) != '*'
+                && !Character.isDigit(line.charAt(0))) {
+            return null;
+        }
+        String [] splitLine = line.split(" ");
+        if (splitLine.length < 6) {
+            return null;
+        }
+        String[] cronExpr = Arrays.copyOfRange(splitLine, 0, 5);
+        String[] runExpr = Arrays.copyOfRange(splitLine, 5, splitLine.length);
+        String joinedCronExpr = TextUtils.join(" ", cronExpr);
+        String joinedRunExpr = TextUtils.join(" ", runExpr);
+        return new ParsedLine(joinedCronExpr, joinedRunExpr);
+    }
+
+    private class ParsedLine {
+        String cronExpr;
+        String runExpr;
+        ParsedLine(String cronExpr, String runExpr) {
+            this.cronExpr = cronExpr;
+            this.runExpr = runExpr;
+        }
     }
 }

@@ -29,8 +29,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        io = new IO(getApplicationContext());
-        crond = new Crond(getApplicationContext());
+        io = new IO(this);
+        crond = new Crond(this);
         reload();
     }
 
@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
         final TextView crontabContent = (TextView) findViewById(R.id.text_content_crontab);
         crontabContent.setMovementMethod(new ScrollingMovementMethod());
 
-        final TextView crondLog = (TextView) findViewById(R.id.text_content_crond);
+        final TextView crondLog = (TextView) findViewById(R.id.text_content_crond_log);
         crondLog.setMovementMethod(new ScrollingMovementMethod());
 
         final Button restartButton = (Button) findViewById(R.id.button_schedule);
@@ -91,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onResume() {
        super.onResume();
+        refreshHandler.removeCallbacksAndMessages(null);
         refreshHandler.post(refresh);
     }
 
@@ -112,9 +113,10 @@ public class MainActivity extends AppCompatActivity {
         public void run() {
             final TextView crontabContent = (TextView) findViewById(R.id.text_content_crontab);
             String fileContent = io.readFileContents(io.getCrontabPath());
-            crontabContent.setText(crond.parseCrontab(fileContent));
+            crontabContent.setText(crond.describeCrontab(fileContent));
+            io.logToLogFile("Parsed crontab");
 
-            final TextView crondLog = (TextView) findViewById(R.id.text_content_crond);
+            final TextView crondLog = (TextView) findViewById(R.id.text_content_crond_log);
             crondLog.setText(io.readFileContents(io.getLogPath()));
             refreshHandler.postDelayed(refresh, 10000);
         }

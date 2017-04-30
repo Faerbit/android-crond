@@ -8,6 +8,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -88,5 +90,10 @@ public class IO {
             e.printStackTrace();
         }
         return output.toString();
+    }
+
+    void logToLogFile(String msg) {
+        msg = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(new Date()) + " " + msg;
+        executeCommand("echo \"" + msg + "\" >> " + getLogPath());
     }
 }
