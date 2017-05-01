@@ -139,6 +139,9 @@ public class Crond {
 
     private ParsedLine parseLine(String line) {
         line = line.trim();
+        if (line == null || line == "") {
+            return null;
+        }
         if (line.charAt(0) != '*'
                 && !Character.isDigit(line.charAt(0))) {
             return null;

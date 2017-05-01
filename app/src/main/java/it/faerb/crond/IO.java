@@ -2,6 +2,7 @@ package it.faerb.crond;
 
 import android.content.Context;
 import android.os.Environment;
+import android.text.TextUtils;
 import android.util.Log;
 
 import java.io.BufferedReader;
@@ -10,6 +11,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
+
+import eu.chainfire.libsuperuser.Shell;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -76,32 +80,20 @@ public class IO {
         return executeCommand("cat " + filePath);
     }
 
-    String executeCommand(String pCommand) {
-        String[] cmd;
+    String executeCommand(String cmd) {
+        List<String> output;
         if (use_root) {
-            cmd = new String[]{"su", "-c", pCommand, "-"};
+            output = Shell.SU.run(cmd);
         }
         else {
-            cmd = new String[]{"sh", "-c", pCommand};
+            output = Shell.SH.run(cmd);
         }
-
-        StringBuilder output = new StringBuilder();
-        try {
-            Process process = new ProcessBuilder()
-                    .command(cmd)
-                    .redirectErrorStream(true)
-                    .start();
-            BufferedReader bufferedReader = new BufferedReader(
-                    new InputStreamReader(process.getInputStream()));
-            String line;
-            while ((line = bufferedReader.readLine()) != null) {
-                output.append(line).append("\n");
-            }
+        if (output != null) {
+            return TextUtils.join("\n", output);
         }
-        catch (IOException e) {
-            e.printStackTrace();
+        else {
+            return "Error when executing cmd:" + cmd;
         }
-        return output.toString();
     }
 
     void logToLogFile(String msg) {
