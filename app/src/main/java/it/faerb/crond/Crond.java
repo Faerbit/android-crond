@@ -96,8 +96,9 @@ public class Crond {
         if (parsedLine == null) {
             return;
         }
+        io.logToLogFile(context.getString(R.string.execute_pre_msg, lineNo));
         io.executeCommand(parsedLine.runExpr);
-        io.logToLogFile(context.getString(R.string.executec_msg, lineNo));
+        io.logToLogFile(context.getString(R.string.execute_post_msg, lineNo));
     }
 
     private SpannableStringBuilder describeLine(String line) {
