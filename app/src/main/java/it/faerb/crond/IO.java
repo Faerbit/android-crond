@@ -18,8 +18,10 @@ public class IO {
     private static final String TAG = "IO";
 
     static final String ROOT_PREFIX = "/data/";
-    static final String CRONTAB_FILE_NAME= "crontab";
-    static final String LOG_FILE_NAME = "crond.log";
+    private static final String CRONTAB_FILE_NAME= "crontab";
+    private static final String CRONTAB_DEBUG_FILE_NAME= "crontab-debug";
+    private static final String LOG_FILE_NAME = "crond.log";
+    private static final String LOG_DEBUG_FILE_NAME = "crond-debug.log";
 
     static final String PREFERENCES_FILE = "preferences.conf";
     static final String PREF_USE_ROOT = "use_root";
@@ -49,11 +51,21 @@ public class IO {
     }
 
     public String getLogPath() {
-        return new File(getPathPrefix(), LOG_FILE_NAME).getAbsolutePath();
+        if (BuildConfig.DEBUG) {
+            return new File(getPathPrefix(), LOG_DEBUG_FILE_NAME).getAbsolutePath();
+        }
+        else {
+            return new File(getPathPrefix(), LOG_FILE_NAME).getAbsolutePath();
+        }
     }
 
     public String getCrontabPath() {
-        return new File(getPathPrefix(), CRONTAB_FILE_NAME).getAbsolutePath();
+        if (BuildConfig.DEBUG) {
+            return new File(getPathPrefix(), CRONTAB_DEBUG_FILE_NAME).getAbsolutePath();
+        }
+        else {
+            return new File(getPathPrefix(), CRONTAB_FILE_NAME).getAbsolutePath();
+        }
     }
 
     void clearLogFile() {
