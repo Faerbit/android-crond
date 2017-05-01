@@ -19,7 +19,7 @@ public class IO {
 
     static final String ROOT_PREFIX = "/data/";
     static final String CRONTAB_FILE_NAME= "crontab";
-    static final String LOG_FILE_NAME = "crond.log.fancy";
+    static final String LOG_FILE_NAME = "crond.log";
 
     static final String PREFERENCES_FILE = "preferences.conf";
     static final String PREF_USE_ROOT = "use_root";

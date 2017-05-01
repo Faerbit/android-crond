@@ -4,7 +4,7 @@ android {
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
     defaultConfig {
-        applicationId "it.faerb.crond.fancy"
+        applicationId "it.faerb.crond"
         minSdkVersion 21
         targetSdkVersion 23
         versionCode 1
