@@ -22,7 +22,7 @@ public class IO {
     static final String LOG_FILE_NAME = "crond.log.fancy";
 
     static final String PREFERENCES_FILE = "preferences.conf";
-    static final String USE_ROOT_PREFERENCE = "use_root";
+    static final String PREF_USE_ROOT = "use_root";
 
     private Context context = null;
 
@@ -36,7 +36,7 @@ public class IO {
 
     public void reload() {
         use_root = context.getSharedPreferences(PREFERENCES_FILE, MODE_PRIVATE)
-                .getBoolean(USE_ROOT_PREFERENCE, false);
+                .getBoolean(PREF_USE_ROOT, false);
     }
 
     private String getPathPrefix() {
@@ -93,7 +93,7 @@ public class IO {
     }
 
     void logToLogFile(String msg) {
-        msg = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(new Date()) + " " + msg;
+        msg = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSS").format(new Date()) + " " + msg;
         executeCommand("echo \"" + msg + "\" >> " + getLogPath());
     }
 }

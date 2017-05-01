@@ -1,12 +1,10 @@
 package it.faerb.crond;
 
 import android.content.DialogInterface;
-import android.os.Build;
 import android.os.Handler;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.Html;
 import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.widget.Button;
@@ -14,13 +12,14 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 
 import static it.faerb.crond.IO.PREFERENCES_FILE;
-import static it.faerb.crond.IO.USE_ROOT_PREFERENCE;
+import static it.faerb.crond.IO.PREF_USE_ROOT;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
 
     private Handler refreshHandler = new Handler();
+    private String crontab = "";
 
     private IO io = null;
     private Crond crond = null;
@@ -30,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         io = new IO(this);
-        crond = new Crond(this);
+        crond = new Crond(this, io);
         reload();
     }
 
@@ -48,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
         restartButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                crond.scheduleCrontab(crontab);
                 refreshImmediately();
             }
         });
@@ -73,12 +73,12 @@ public class MainActivity extends AppCompatActivity {
 
         final CheckBox rootCheck = (CheckBox) findViewById(R.id.check_root);
         rootCheck.setChecked(getSharedPreferences(PREFERENCES_FILE, MODE_PRIVATE)
-                .getBoolean(USE_ROOT_PREFERENCE, false));
+                .getBoolean(PREF_USE_ROOT, false));
         rootCheck.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 getSharedPreferences(PREFERENCES_FILE, MODE_PRIVATE).edit()
-                        .putBoolean(USE_ROOT_PREFERENCE, rootCheck.isChecked())
+                        .putBoolean(PREF_USE_ROOT, rootCheck.isChecked())
                         .apply();
                 io.reload();
                 reload();
@@ -112,9 +112,8 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void run() {
             final TextView crontabContent = (TextView) findViewById(R.id.text_content_crontab);
-            String fileContent = io.readFileContents(io.getCrontabPath());
-            crontabContent.setText(crond.describeCrontab(fileContent));
-            io.logToLogFile("Parsed crontab");
+            crontab = io.readFileContents(io.getCrontabPath());
+            crontabContent.setText(crond.describeCrontab(crontab));
 
             final TextView crondLog = (TextView) findViewById(R.id.text_content_crond_log);
             crondLog.setText(io.readFileContents(io.getLogPath()));

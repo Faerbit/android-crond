@@ -9,4 +9,7 @@
     <string name="check_use_root">Use root</string>
     <string name="run">Run</string>
     <string name="invalid_cron">Invalid cron expression</string>
+    <string name="scheduled_msg">Scheduled line %1$d at %2$s</string>
+    <string name="executec_msg">Executed line %1$d</string>
+    <string name="boot_msg">Boot completed. Scheduling crontab:</string>
 </resources>

@@ -3,7 +3,6 @@ package it.faerb.crond;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
 public class BootCompleteReceiver extends BroadcastReceiver {
 
@@ -11,6 +10,9 @@ public class BootCompleteReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.d(TAG, "Boot completed");
+        IO io = new IO(context);
+        Crond crond = new Crond(context, io);
+        io.logToLogFile(context.getString(R.string.boot_msg));
+        crond.scheduleCrontab(io.readFileContents(io.getCrontabPath()));
     }
 }
