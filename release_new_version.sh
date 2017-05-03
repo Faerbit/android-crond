@@ -7,7 +7,7 @@ then
     exit 1
 fi
 
-echo "Release new version current version is $(grep "versionCode \"" app/build.gradle | awk '{print $2}')"
+echo "Release new version current version is $(grep "versionName \"" app/build.gradle | awk '{print $2}')"
 read -p "Input new version:" new_version_name
 new_version_code=$(($(git tag --merged | wc -l)+1))
 echo New version name: $new_version_name
