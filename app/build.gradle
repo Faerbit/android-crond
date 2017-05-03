@@ -7,7 +7,7 @@ def computeVersionCode = { ->
             commandLine 'git', 'rev-list', '--count', 'HEAD'
             standardOutput = stdout
         }
-        logger.lifecycle("Version Code: " + stdout.toString().trim())
+        logger.lifecycle("Debug Version Code: " + stdout.toString().trim())
         return Integer.parseInt(stdout.toString().trim())
     }
     catch (ignored) {
@@ -22,7 +22,7 @@ def computeVersionName = { ->
             commandLine 'git', 'describe', '--tags', '--long'
             standardOutput = stdout
         }
-        logger.lifecycle("Version Name: " + stdout.toString().trim())
+        logger.lifecycle("Debug Version Name: " + stdout.toString().trim())
         return stdout.toString().trim()
     }
     catch (ignored) {
@@ -67,7 +67,7 @@ android {
         applicationId "it.faerb.crond"
         minSdkVersion 21
         targetSdkVersion 23
-        versionCode "6"
+        versionCode 6
         versionName "v1.2.2"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
@@ -75,8 +75,8 @@ android {
         debug {
             applicationIdSuffix ".debug"
             manifestPlaceholders = [applicationLabel: "@string/app_name_debug"]
-            versionCode computeVersionCode()
-            versionName computeVersionName()
+            defaultConfig.versionCode = computeVersionCode()
+            defaultConfig.versionName = computeVersionName()
             applicationVariants.all { variant ->
                 renameApk(variant, defaultConfig)
             }

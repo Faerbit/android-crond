@@ -14,7 +14,7 @@ echo New version name: $new_version_name
 echo New version code: $new_version_code
 
 sed -i "s/versionName \".*\"$/versionName \"$new_version_name\"/" app/build.gradle
-sed -i "s/versionCode [0-9]*$/versionCode \"$new_version_code\"/" app/build.gradle
+sed -i "s/versionCode [0-9]*$/versionCode $new_version_code\/" app/build.gradle
 
 git add app/build.gradle
 git commit -m "Bumping version to $new_version_name."
