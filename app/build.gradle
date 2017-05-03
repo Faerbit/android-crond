@@ -1,5 +1,59 @@
 apply plugin: 'com.android.application'
 
+def getVersionCode = { ->
+    try {
+        def hash = new ByteArrayOutputStream()
+        exec {
+            commandLine 'git', 'rev-list', '--tags', '--no-walk', '--max-count=1'
+            standardOutput = hash
+        }
+        hash = hash.toString().trim()
+        def stdout = new ByteArrayOutputStream()
+        exec {
+            commandLine 'git', 'rev-list', hash + '..HEAD', '--count'
+            standardOutput = stdout
+        }
+        return Integer.parseInt(stdout.toString().trim())
+    }
+    catch (ignored) {
+        return -1;
+    }
+}
+
+def getVersionName = { ->
+    try {
+        def stdout = new ByteArrayOutputStream()
+        exec {
+            commandLine 'git', 'describe', '--tags', '--long'
+            standardOutput = stdout
+        }
+        return stdout.toString().trim()
+    }
+    catch (ignored) {
+        return null;
+    }
+}
+
+def renameApk(variant, defaultConfig) {
+    variant.outputs.each { output ->
+        def buildType = ""
+        def file = output.packageApplication.outputFile
+        if (file.name.contains("release")) {
+            buildType = "release"
+        } else {
+            buildType = "debug"
+        }
+        def fileName = defaultConfig.applicationId + "-"
+        fileName += defaultConfig.versionName + "-"
+        fileName += defaultConfig.versionCode + "-"
+        fileName += buildType + ".apk"
+        if (buildType == "release") {
+            output.packageApplication.outputFile = new File(rootDir, fileName)
+        } else {
+            output.packageApplication.outputFile = new File(file.parent, fileName)
+        }
+    }
+}
 
 def keystorePropertiesFile = rootProject.file("keystore.properties")
 
@@ -22,20 +76,26 @@ android {
         applicationId "it.faerb.crond"
         minSdkVersion 21
         targetSdkVersion 23
-        versionCode 2
-        versionName "1.1"
+        versionCode getVersionCode()
+        versionName getVersionName()
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         debug {
             applicationIdSuffix ".debug"
             manifestPlaceholders = [applicationLabel: "@string/app_name_debug"]
+            applicationVariants.all { variant ->
+                renameApk(variant, defaultConfig)
+            }
         }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             manifestPlaceholders = [applicationLabel: "@string/app_name"]
             signingConfig signingConfigs.release
+            applicationVariants.all { variant ->
+                renameApk(variant, defaultConfig)
+            }
         }
     }
 }
