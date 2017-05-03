@@ -7,7 +7,6 @@ def computeVersionCode = { ->
             commandLine 'git', 'rev-list', '--count', 'HEAD'
             standardOutput = stdout
         }
-        logger.lifecycle("Debug Version Code: " + stdout.toString().trim())
         return Integer.parseInt(stdout.toString().trim())
     }
     catch (ignored) {
@@ -15,14 +14,13 @@ def computeVersionCode = { ->
     }
 }
 
-def computeVersionName = { ->
+ext.computeVersionName = { ->
     try {
         def stdout = new ByteArrayOutputStream()
         exec {
             commandLine 'git', 'describe', '--tags', '--long'
             standardOutput = stdout
         }
-        logger.lifecycle("Debug Version Name: " + stdout.toString().trim())
         return stdout.toString().trim()
     }
     catch (ignored) {
@@ -39,9 +37,17 @@ def renameApk(variant, defaultConfig) {
         } else {
             buildType = "debug"
         }
-        def fileName = defaultConfig.applicationId + "-"
-        fileName += defaultConfig.versionName + "-"
-        fileName += buildType + ".apk"
+        def fileName = ""
+        if (buildType == "debug") {
+            fileName = defaultConfig.applicationId + "-"
+            fileName += computeVersionName() + "-"
+            fileName += buildType + ".apk"
+        }
+        else {
+            fileName = defaultConfig.applicationId + "-"
+            fileName += defaultConfig.versionName + "-"
+            fileName += buildType + ".apk"
+        }
         output.packageApplication.outputFile = new File(file.parent, fileName)
     }
 }
@@ -77,8 +83,6 @@ android {
         debug {
             applicationIdSuffix ".debug"
             manifestPlaceholders = [applicationLabel: "@string/app_name_debug"]
-            defaultConfig.versionCode = computeVersionCode()
-            defaultConfig.versionName = computeVersionName()
             applicationVariants.all { variant ->
                 renameApk(variant, defaultConfig)
             }
@@ -91,6 +95,17 @@ android {
             applicationVariants.all { variant ->
                 renameApk(variant, defaultConfig)
             }
+        }
+    }
+    applicationVariants.all { variant ->
+        def flavor = variant.mergedFlavor
+        if (variant.buildType.isDebuggable()) {
+        flavor.versionName = computeVersionName()
+        flavor.versionCode = computeVersionCode()
+        }
+        else {
+            flavor.versionName = defaultConfig.versionName
+            flavor.versionCode = defaultConfig.versionCode
         }
     }
 }
