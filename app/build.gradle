@@ -42,11 +42,7 @@ def renameApk(variant, defaultConfig) {
         def fileName = defaultConfig.applicationId + "-"
         fileName += defaultConfig.versionName + "-"
         fileName += buildType + ".apk"
-        if (buildType == "release") {
-            output.packageApplication.outputFile = new File(rootDir, fileName)
-        } else {
-            output.packageApplication.outputFile = new File(file.parent, fileName)
-        }
+        output.packageApplication.outputFile = new File(file.parent, fileName)
     }
 }
 
