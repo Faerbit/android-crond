@@ -4,8 +4,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-import static it.faerb.crond.Crond.INTENT_EXTRA_LINE_NAME;
-import static it.faerb.crond.Crond.INTENT_EXTRA_LINE_NO_NAME;
+import static it.faerb.crond.Constants.INTENT_EXTRA_LINE_NAME;
+import static it.faerb.crond.Constants.INTENT_EXTRA_LINE_NO_NAME;
 
 public class AlarmReceiver extends BroadcastReceiver {
 

@@ -3,7 +3,6 @@
     <string name="app_name">crond</string>
     <string name="boot_msg">Boot abgeschlossen. Plane crontab:</string>
     <string name="button_label_clear">Leere Log</string>
-    <string name="button_label_schedule">Plane Aufgaben</string>
     <string name="check_use_root">Benutze root</string>
     <string name="dialog_clean_message">Bist du sicher, dass du das Log leeren möchtest?</string>
     <string name="dialog_clean_title">Leeren?</string>

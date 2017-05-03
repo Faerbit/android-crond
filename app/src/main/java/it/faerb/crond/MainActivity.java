@@ -1,18 +1,20 @@
 package it.faerb.crond;
 
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Handler;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.TextView;
 
-import static it.faerb.crond.IO.PREFERENCES_FILE;
-import static it.faerb.crond.IO.PREF_USE_ROOT;
+import static it.faerb.crond.Constants.PREFERENCES_FILE;
+import static it.faerb.crond.Constants.PREF_ENABLED;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -24,18 +26,18 @@ public class MainActivity extends AppCompatActivity {
     private IO io = null;
     private Crond crond = null;
 
+    private SharedPreferences sharedPreferences = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         io = new IO(this);
         crond = new Crond(this, io);
-        reload();
-    }
+        sharedPreferences = getSharedPreferences(PREFERENCES_FILE, MODE_PRIVATE);
 
-    private void reload() {
         final TextView crontabLabel = (TextView) findViewById(R.id.text_label_crontab);
-        crontabLabel.setText(String.format("crontab %s:", io.getCrontabPath()));
+        crontabLabel.setText(getString(R.string.crontab_label, io.getCrontabPath()));
 
         final TextView crontabContent = (TextView) findViewById(R.id.text_content_crontab);
         crontabContent.setMovementMethod(new ScrollingMovementMethod());
@@ -43,11 +45,14 @@ public class MainActivity extends AppCompatActivity {
         final TextView crondLog = (TextView) findViewById(R.id.text_content_crond_log);
         crondLog.setMovementMethod(new ScrollingMovementMethod());
 
-        final Button restartButton = (Button) findViewById(R.id.button_schedule);
-        restartButton.setOnClickListener(new View.OnClickListener() {
+        final Button enableButton = (Button) findViewById(R.id.button_enable);
+        enableButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                crond.scheduleCrontab(crontab);
+                boolean oldEnabled = sharedPreferences.getBoolean(PREF_ENABLED, false);
+                sharedPreferences.edit().putBoolean(PREF_ENABLED, !oldEnabled).apply();
+                updateEnabled();
+                // TODO schedule
                 refreshImmediately();
             }
         });
@@ -71,20 +76,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        final CheckBox rootCheck = (CheckBox) findViewById(R.id.check_root);
-        rootCheck.setChecked(getSharedPreferences(PREFERENCES_FILE, MODE_PRIVATE)
-                .getBoolean(PREF_USE_ROOT, false));
-        rootCheck.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                getSharedPreferences(PREFERENCES_FILE, MODE_PRIVATE).edit()
-                        .putBoolean(PREF_USE_ROOT, rootCheck.isChecked())
-                        .apply();
-                io.reload();
-                reload();
-            }
-        });
-
+        updateEnabled();
         refreshHandler.post(refresh);
     }
 
@@ -106,7 +98,40 @@ public class MainActivity extends AppCompatActivity {
         refreshHandler.post(refresh);
     }
 
+    private void updateEnabled() {
+        boolean enabled = getSharedPreferences(PREFERENCES_FILE, MODE_PRIVATE)
+                .getBoolean(PREF_ENABLED, false);
+        final TextView crontabContent = (TextView) findViewById(R.id.text_content_crontab);
+        final TextView crondLog = (TextView) findViewById(R.id.text_content_crond_log);
+        final Button enableButton = (Button) findViewById(R.id.button_enable);
 
+        if (enabled) {
+            if (Build.VERSION.SDK_INT >= 23) {
+                crontabContent.setBackgroundColor(getColor(R.color.colorBackgroundActive));
+                crondLog.setBackgroundColor(getColor(R.color.colorBackgroundActive));
+            }
+            else {
+                crontabContent.setBackgroundColor(getResources()
+                        .getColor(R.color.colorBackgroundActive));
+                crondLog.setBackgroundColor(getResources()
+                        .getColor(R.color.colorBackgroundActive));
+            }
+            enableButton.setText(getString(R.string.button_label_enabled));
+        }
+        else {
+            if (Build.VERSION.SDK_INT >= 23) {
+                crontabContent.setBackgroundColor(getColor(R.color.colorBackgroundInactive));
+                crondLog.setBackgroundColor(getColor(R.color.colorBackgroundInactive));
+            }
+            else {
+                crontabContent.setBackgroundColor(getResources()
+                        .getColor(R.color.colorBackgroundInactive));
+                crondLog.setBackgroundColor(getResources()
+                        .getColor(R.color.colorBackgroundInactive));
+            }
+            enableButton.setText(getString(R.string.button_label_disabled));
+        }
+    }
 
     private final Runnable refresh = new Runnable() {
         @Override

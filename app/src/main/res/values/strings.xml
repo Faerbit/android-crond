@@ -6,7 +6,8 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="button_label_clear">Clear log</string>
-    <string name="button_label_schedule">Schedule Tasks</string>
+    <string name="button_label_enabled">Disable crond</string>
+    <string name="button_label_disabled">Enable crond</string>
     <string name="check_use_root">Use root</string>
     <string name="run">Run</string>
     <string name="invalid_cron">Invalid cron expression</string>
@@ -14,4 +15,6 @@
     <string name="execute_pre_msg">Execute line %1$d</string>
     <string name="execute_post_msg">Executed line %1$d</string>
     <string name="boot_msg">Boot completed. Scheduling crontab:</string>
+    <string name="crontab_label" translatable="false">crontab %s:</string>
+    <string name="crond_log_label" translatable="false">crond log:</string>
 </resources>

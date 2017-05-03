@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
-        android:text="crontab path: " />
+        android:text="@string/crontab_label" />
 
     <TextView
         android:id="@+id/text_content_crontab"
@@ -18,11 +18,11 @@
         android:layout_height="0px"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
-        android:background="#eee"
+        android:background="@color/colorBackgroundInactive"
         android:layout_weight="0.5"
         android:scrollbars="vertical"
-        android:textSize="11dp"
-        android:text="Crontab" />
+        android:textSize="11sp"
+        android:text="" />
 
     <TextView
         android:id="@+id/text_label_crond_log"
@@ -30,7 +30,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
-        android:text="crond log:" />
+        android:text="@string/crond_log_label" />
 
     <TextView
         android:id="@+id/text_content_crond_log"
@@ -38,21 +38,11 @@
         android:layout_height="0px"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
-        android:background="#eee"
+        android:background="@color/colorBackgroundActive"
         android:layout_weight="0.5"
         android:scrollbars="vertical"
-        android:textSize="11dp"
-        android:text="TextView" />
-
-
-    <CheckBox
-        android:id="@+id/check_root"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
-        android:text="@string/check_use_root" />
+        android:textSize="11sp"
+        android:text="" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -66,12 +56,12 @@
             android:layout_weight="0.5"
             android:text="@string/button_label_clear" />
         <Button
-            android:id="@+id/button_schedule"
+            android:id="@+id/button_enable"
             android:layout_width="0px"
             android:layout_height="wrap_content"
             android:layout_marginBottom="5dp"
             android:layout_weight="0.5"
-            android:text="@string/button_label_schedule" />
+            android:text="@string/button_label_disabled" />
     </LinearLayout>
 
 

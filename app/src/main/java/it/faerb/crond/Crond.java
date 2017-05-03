@@ -26,7 +26,10 @@ import org.joda.time.format.DateTimeFormat;
 import java.util.Arrays;
 import java.util.Locale;
 
-import static it.faerb.crond.IO.PREFERENCES_FILE;
+import static it.faerb.crond.Constants.INTENT_EXTRA_LINE_NAME;
+import static it.faerb.crond.Constants.INTENT_EXTRA_LINE_NO_NAME;
+import static it.faerb.crond.Constants.PREFERENCES_FILE;
+
 
 public class Crond {
 
@@ -40,8 +43,6 @@ public class Crond {
     private IO io = null;
     private AlarmManager alarmManager = null;
 
-    public static final String INTENT_EXTRA_LINE_NAME = "it.faerb.crond.line";
-    public static final String INTENT_EXTRA_LINE_NO_NAME = "it.faerb.crond.lineNo";
 
     private static final String PREF_OLD_TAB_LINE_COUNT = "old_tab_line_count";
 
@@ -116,14 +117,14 @@ public class Crond {
             ret.append(descriptor.describe(parser.parse(parsedLine.cronExpr)) + "\n",
                     new StyleSpan(Typeface.ITALIC), Spanned.SPAN_COMPOSING);
         }
-        if (Build.VERSION.SDK_INT < 23) {
+        if (Build.VERSION.SDK_INT >= 23) {
             ret.setSpan(new ForegroundColorSpan(
-                            context.getResources().getColor(R.color.colorPrimaryDark)), 0,
+                            context.getColor(R.color.colorPrimaryDark)), 0,
                     ret.length(), Spanned.SPAN_COMPOSING);
         }
         else {
             ret.setSpan(new ForegroundColorSpan(
-                            context.getColor(R.color.colorPrimaryDark)), 0,
+                            context.getResources().getColor(R.color.colorPrimaryDark)), 0,
                     ret.length(), Spanned.SPAN_COMPOSING);
         }
         return ret;
@@ -139,7 +140,7 @@ public class Crond {
 
     private ParsedLine parseLine(String line) {
         line = line.trim();
-        if (line == null || line == "") {
+        if (line == null || line.equals("")) {
             return null;
         }
         if (line.charAt(0) != '*'
