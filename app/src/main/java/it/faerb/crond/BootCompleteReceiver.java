@@ -12,7 +12,8 @@ public class BootCompleteReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         IO io = new IO(context);
         Crond crond = new Crond(context, io);
-        io.logToLogFile(context.getString(R.string.boot_msg));
-        crond.scheduleCrontab(io.readFileContents(io.getCrontabPath()));
+        io.logToLogFile(context.getString(R.string.log_boot));
+        crond.setCrontab(io.readFileContents(io.getCrontabPath()));
+        crond.scheduleCrontab();
     }
 }

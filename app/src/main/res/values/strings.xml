@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">crond</string>
+    <string name="app_name" translatable="false">crond</string>
     <string name="app_name_debug" translatable="false">crond debug</string>
     <string name="dialog_clean_title">Clear?</string>
     <string name="dialog_clean_message">Are you sure you want to clean this?</string>
@@ -8,13 +8,14 @@
     <string name="button_label_clear">Clear log</string>
     <string name="button_label_enabled">Disable crond</string>
     <string name="button_label_disabled">Enable crond</string>
-    <string name="check_use_root">Use root</string>
     <string name="run">Run</string>
     <string name="invalid_cron">Invalid cron expression</string>
-    <string name="scheduled_msg">Scheduled line %1$d at %2$s</string>
-    <string name="execute_pre_msg">Execute line %1$d</string>
-    <string name="execute_post_msg">Executed line %1$d</string>
-    <string name="boot_msg">Boot completed. Scheduling crontab:</string>
+    <string name="log_scheduled">Scheduled line %1$d at %2$s</string>
+    <string name="log_execute_pre">Execute line %1$d</string>
+    <string name="log_execute_post">Executed line %1$d</string>
+    <string name="log_boot">Boot completed. Scheduling crontab:</string>
+    <string name="log_crontab_change_detected">Crontab change detected. Scheduling new crontab:</string>
     <string name="crontab_label" translatable="false">crontab %s:</string>
     <string name="crond_log_label" translatable="false">crond log:</string>
+    <string name="root_required">Root is required for this app to work.</string>
 </resources>

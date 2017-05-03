@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:id="@+id/root_layout">
 
     <TextView
         android:id="@+id/text_label_crontab"
@@ -10,7 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
-        android:text="@string/crontab_label" />
+        android:text="@string/root_required" />
 
     <TextView
         android:id="@+id/text_content_crontab"
@@ -22,7 +23,9 @@
         android:layout_weight="0.5"
         android:scrollbars="vertical"
         android:textSize="11sp"
-        android:text="" />
+        android:text=""
+        android:enabled="false"
+        android:visibility="gone"/>
 
     <TextView
         android:id="@+id/text_label_crond_log"
@@ -30,7 +33,9 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
-        android:text="@string/crond_log_label" />
+        android:text="@string/crond_log_label"
+        android:enabled="false"
+        android:visibility="gone"/>
 
     <TextView
         android:id="@+id/text_content_crond_log"
@@ -42,12 +47,16 @@
         android:layout_weight="0.5"
         android:scrollbars="vertical"
         android:textSize="11sp"
-        android:text="" />
+        android:text=""
+        android:enabled="false"
+        android:visibility="gone"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:enabled="false"
+        android:visibility="gone">
         <Button
             android:id="@+id/button_clear_log"
             android:layout_width="0px"

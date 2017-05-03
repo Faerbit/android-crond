@@ -9,11 +9,14 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import eu.chainfire.libsuperuser.Shell;
+
+import static android.view.View.VISIBLE;
 import static it.faerb.crond.Constants.PREFERENCES_FILE;
 import static it.faerb.crond.Constants.PREF_ENABLED;
 
@@ -22,21 +25,45 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
 
     private Handler refreshHandler = new Handler();
-    private String crontab = "";
 
     private IO io = null;
     private Crond crond = null;
 
-    private SharedPreferences sharedPreferences = null;
+    private SharedPreferences sharedPrefs = null;
+    private boolean rootAvailable = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        new RootChecker().execute();
+    }
+
+    private class RootChecker extends AsyncTask<Void, Void, Boolean> {
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            return Shell.SU.available();
+        }
+
+        @Override
+        protected void onPostExecute(Boolean rootAvail) {
+            if (rootAvail) {
+                init();
+            }
+        }
+    }
+
+    private void init() {
         io = new IO(this);
         crond = new Crond(this, io);
-        sharedPreferences = getSharedPreferences(PREFERENCES_FILE, MODE_PRIVATE);
+        sharedPrefs = getSharedPreferences(PREFERENCES_FILE, MODE_PRIVATE);
 
+        LinearLayout layout = (LinearLayout) findViewById(R.id.root_layout);
+        for (int i = 0; i<layout.getChildCount(); i++) {
+            View view = layout.getChildAt(i);
+            view.setEnabled(true);
+            view.setVisibility(VISIBLE);
+        }
         final TextView crontabLabel = (TextView) findViewById(R.id.text_label_crontab);
         crontabLabel.setText(getString(R.string.crontab_label, io.getCrontabPath()));
 
@@ -50,10 +77,10 @@ public class MainActivity extends AppCompatActivity {
         enableButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                boolean oldEnabled = sharedPreferences.getBoolean(PREF_ENABLED, false);
-                sharedPreferences.edit().putBoolean(PREF_ENABLED, !oldEnabled).apply();
+                boolean oldEnabled = sharedPrefs.getBoolean(PREF_ENABLED, false);
+                sharedPrefs.edit().putBoolean(PREF_ENABLED, !oldEnabled).apply();
                 updateEnabled();
-                // TODO schedule
+                crond.scheduleCrontab();
                 refreshImmediately();
             }
         });
@@ -85,7 +112,9 @@ public class MainActivity extends AppCompatActivity {
     public void onResume() {
        super.onResume();
         refreshHandler.removeCallbacksAndMessages(null);
-        refreshHandler.post(refresh);
+        if (rootAvailable) {
+            refreshHandler.post(refresh);
+        }
     }
 
     @Override
@@ -142,21 +171,24 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    private class FileReader extends AsyncTask<Void, Void, String> {
+    private class FileReader extends AsyncTask<Void, Void, CharSequence[]> {
         @Override
-        protected String doInBackground(Void... params) {
-            crontab = io.readFileContents(io.getCrontabPath());
+        protected CharSequence[] doInBackground(Void... params) {
+            CharSequence[] ret = new CharSequence[2];
+            crond.setCrontab(io.readFileContents(io.getCrontabPath()));
+            ret[0] = crond.processCrontab();
 
-            return io.readFileContents(io.getLogPath());
+            ret[1] = io.readFileContents(io.getLogPath());
+            return ret;
         }
 
         @Override
-        protected void onPostExecute(String log) {
+        protected void onPostExecute(CharSequence[] sequences) {
             final TextView crontabContent = (TextView) findViewById(R.id.text_content_crontab);
-            crontabContent.setText(crond.describeCrontab(crontab));
+            crontabContent.setText(sequences[0]);
 
             final TextView crondLog = (TextView) findViewById(R.id.text_content_crond_log);
-            crondLog.setText(io.readFileContents(io.getLogPath()));
+            crondLog.setText(sequences[1]);
         }
     }
 

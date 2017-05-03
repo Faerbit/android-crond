@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">crond</string>
-    <string name="boot_msg">Boot abgeschlossen. Plane crontab:</string>
     <string name="button_label_clear">Leere Log</string>
-    <string name="check_use_root">Benutze root</string>
     <string name="dialog_clean_message">Bist du sicher, dass du das Log leeren möchtest?</string>
     <string name="dialog_clean_title">Leeren?</string>
     <string name="invalid_cron">Ungültiger Ausdruck</string>
     <string name="no">Nein</string>
     <string name="run">Starte</string>
-    <string name="scheduled_msg">Plane Zeile %1$d um %2$s</string>
     <string name="yes">Ja</string>
-    <string name="execute_post_msg">Zeile %1$d ausgeführt</string>
-    <string name="execute_pre_msg">Starte Zeile %1$d</string>
+    <string name="log_boot">Boot abgeschlossen. Plane crontab:</string>
+    <string name="log_execute_post">Zeile %1$d ausgeführt</string>
+    <string name="log_execute_pre">Starte Zeile %1$d</string>
+    <string name="log_scheduled">Plane Zeile %1$d um %2$s</string>
+    <string name="log_crontab_change_detected">crontab-Veränderung entdeckt. Plane neuen crontab:</string>
+    <string name="button_label_disabled">Aktiviere crond</string>
+    <string name="button_label_enabled">Deaktiviere crond</string>
+    <string name="root_required">Root-Rechte sind erforderlich, damit diese App funktioniert.</string>
 </resources>

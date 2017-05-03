@@ -13,6 +13,7 @@ import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
 import android.text.style.TypefaceSpan;
+import android.util.Log;
 
 import com.cronutils.descriptor.CronDescriptor;
 import com.cronutils.model.CronType;
@@ -23,12 +24,16 @@ import com.cronutils.parser.CronParser;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Locale;
 
 import static it.faerb.crond.Constants.INTENT_EXTRA_LINE_NAME;
 import static it.faerb.crond.Constants.INTENT_EXTRA_LINE_NO_NAME;
 import static it.faerb.crond.Constants.PREFERENCES_FILE;
+import static it.faerb.crond.Constants.PREF_CRONTAB_HASH;
+import static it.faerb.crond.Constants.PREF_ENABLED;
 
 
 public class Crond {
@@ -42,36 +47,63 @@ public class Crond {
     private Context context = null;
     private IO io = null;
     private AlarmManager alarmManager = null;
+    private SharedPreferences sharedPrefs = null;
+    private String crontab = "";
 
-
-    private static final String PREF_OLD_TAB_LINE_COUNT = "old_tab_line_count";
+    private static final String PREF_CRONTAB_LINE_COUNT = "old_tab_line_count";
+    private static final String HASH_ALGO = "sha-256";
 
     public Crond(Context context, IO io) {
         this.context = context;
         this.io = io;
         alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        sharedPrefs = context.getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE);
     }
 
-    public SpannableStringBuilder describeCrontab(String crontab) {
+    public SpannableStringBuilder processCrontab() {
         SpannableStringBuilder ret = new SpannableStringBuilder();
+        String hashedTab = "";
+        try {
+            MessageDigest messageDigest = MessageDigest.getInstance(HASH_ALGO);
+            messageDigest.update(crontab.getBytes());
+            hashedTab = new String(messageDigest.digest());
+        }
+        catch (NoSuchAlgorithmException e) {
+            Log.e(TAG, String.format("Algorithm %s not found:", HASH_ALGO));
+            e.printStackTrace();
+        }
+        if (!hashedTab.equals(sharedPrefs.getString(PREF_CRONTAB_HASH, ""))
+                && !crontab.equals("")) {
+            io.logToLogFile(context.getString(R.string.log_crontab_change_detected));
+            scheduleCrontab();
+            sharedPrefs.edit().putString(PREF_CRONTAB_HASH, hashedTab).apply();
+        }
+        if (crontab.equals("")) {
+            return ret;
+        }
         for (String line : crontab.split("\n")){
             ret.append(line + "\n",
                     new TypefaceSpan("monospace"), Spanned.SPAN_COMPOSING);
             ret.append(describeLine(line));
         }
-       return ret;
+        return ret;
     }
 
-    public void scheduleCrontab(String crontab) {
-        SharedPreferences sharedPrefs= context.getSharedPreferences(PREFERENCES_FILE,
-                Context.MODE_PRIVATE);
-        cancelAllAlarms(sharedPrefs.getInt(PREF_OLD_TAB_LINE_COUNT, 0));
+    public void setCrontab(String crontab) {
+        this.crontab = crontab;
+    }
+
+    public void scheduleCrontab() {
+        cancelAllAlarms(sharedPrefs.getInt(PREF_CRONTAB_LINE_COUNT, 0));
+        if (!sharedPrefs.getBoolean(PREF_ENABLED, false)) {
+            return;
+        }
         int i = 0;
         for (String line : crontab.split("\n")) {
             scheduleLine(line, i);
             i++;
         }
-        sharedPrefs.edit().putInt(PREF_OLD_TAB_LINE_COUNT, crontab.split("\n").length).apply();
+        sharedPrefs.edit().putInt(PREF_CRONTAB_LINE_COUNT, crontab.split("\n").length).apply();
     }
 
     public void scheduleLine(String line, int lineNo) {
@@ -88,7 +120,7 @@ public class Crond {
                 PendingIntent.FLAG_UPDATE_CURRENT); // update current to replace the one used
                                                     // for cancelling any previous set alarms
         alarmManager.set(AlarmManager.RTC_WAKEUP, next.getMillis(), alarmIntent);
-        io.logToLogFile(context.getString(R.string.scheduled_msg, lineNo,
+        io.logToLogFile(context.getString(R.string.log_scheduled, lineNo,
                 DateTimeFormat.forPattern("YYYY-MM-dd HH:mm:ss.SSSS").print(next)));
     }
 
@@ -97,9 +129,9 @@ public class Crond {
         if (parsedLine == null) {
             return;
         }
-        io.logToLogFile(context.getString(R.string.execute_pre_msg, lineNo));
+        io.logToLogFile(context.getString(R.string.log_execute_pre, lineNo));
         io.executeCommand(parsedLine.runExpr);
-        io.logToLogFile(context.getString(R.string.execute_post_msg, lineNo));
+        io.logToLogFile(context.getString(R.string.log_execute_post, lineNo));
     }
 
     private SpannableStringBuilder describeLine(String line) {
@@ -140,7 +172,7 @@ public class Crond {
 
     private ParsedLine parseLine(String line) {
         line = line.trim();
-        if (line == null || line.equals("")) {
+        if (line.equals("")) {
             return null;
         }
         if (line.charAt(0) != '*'
