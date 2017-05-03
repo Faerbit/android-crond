@@ -28,6 +28,15 @@
         android:visibility="gone"/>
 
     <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:text="@string/reopen_hint"
+        android:enabled="false"
+        android:visibility="gone"/>
+
+    <TextView
         android:id="@+id/text_label_crond_log"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -55,6 +64,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
         android:enabled="false"
         android:visibility="gone">
         <Button

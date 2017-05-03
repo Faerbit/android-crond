@@ -15,4 +15,5 @@
     <string name="button_label_disabled">Aktiviere crond</string>
     <string name="button_label_enabled">Deaktiviere crond</string>
     <string name="root_required">Root-Rechte sind erforderlich, damit diese App funktioniert.</string>
+    <string name="reopen_hint">Öffne diese App, damit Änderungen im crontab angewendet werden.</string>
 </resources>

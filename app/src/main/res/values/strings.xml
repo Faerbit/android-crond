@@ -18,4 +18,5 @@
     <string name="crontab_label" translatable="false">crontab %s:</string>
     <string name="crond_log_label" translatable="false">crond log:</string>
     <string name="root_required">Root is required for this app to work.</string>
+    <string name="reopen_hint">Open this app for changes to the crontab to be applied.</string>
 </resources>
