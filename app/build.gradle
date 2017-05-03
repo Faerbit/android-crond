@@ -1,6 +1,6 @@
 apply plugin: 'com.android.application'
 
-def getVersionCode = { ->
+def computeVersionCode = { ->
     try {
         def stdout = new ByteArrayOutputStream()
         exec {
@@ -15,7 +15,7 @@ def getVersionCode = { ->
     }
 }
 
-def getVersionName = { ->
+def computeVersionName = { ->
     try {
         def stdout = new ByteArrayOutputStream()
         exec {
@@ -67,14 +67,16 @@ android {
         applicationId "it.faerb.crond"
         minSdkVersion 21
         targetSdkVersion 23
-        versionCode getVersionCode()
-        versionName getVersionName()
+        versionCode 5
+        versionName "v1.2.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         debug {
             applicationIdSuffix ".debug"
             manifestPlaceholders = [applicationLabel: "@string/app_name_debug"]
+            versionCode computeVersionCode()
+            versionName computeVersionName()
             applicationVariants.all { variant ->
                 renameApk(variant, defaultConfig)
             }
