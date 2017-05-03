@@ -2,6 +2,7 @@ package it.faerb.crond;
 
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Handler;
 import android.support.v7.app.AlertDialog;
@@ -68,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
                         .setPositiveButton(R.string.yes, new AlertDialog.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                io.clearLogFile();
+                                new LogClearer().execute();
                                 refreshImmediately();
                             }
                         })
@@ -136,14 +137,34 @@ public class MainActivity extends AppCompatActivity {
     private final Runnable refresh = new Runnable() {
         @Override
         public void run() {
-            final TextView crontabContent = (TextView) findViewById(R.id.text_content_crontab);
-            crontab = io.readFileContents(io.getCrontabPath());
-            crontabContent.setText(crond.describeCrontab(crontab));
-
-            final TextView crondLog = (TextView) findViewById(R.id.text_content_crond_log);
-            crondLog.setText(io.readFileContents(io.getLogPath()));
+            new FileReader().execute();
             refreshHandler.postDelayed(refresh, 10000);
         }
     };
 
+    private class FileReader extends AsyncTask<Void, Void, String> {
+        @Override
+        protected String doInBackground(Void... params) {
+            crontab = io.readFileContents(io.getCrontabPath());
+
+            return io.readFileContents(io.getLogPath());
+        }
+
+        @Override
+        protected void onPostExecute(String log) {
+            final TextView crontabContent = (TextView) findViewById(R.id.text_content_crontab);
+            crontabContent.setText(crond.describeCrontab(crontab));
+
+            final TextView crondLog = (TextView) findViewById(R.id.text_content_crond_log);
+            crondLog.setText(io.readFileContents(io.getLogPath()));
+        }
+    }
+
+    private class LogClearer extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... params) {
+            io.clearLogFile();
+            return null;
+        }
+    }
 }
