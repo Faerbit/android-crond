@@ -36,7 +36,7 @@ import static it.faerb.crond.Constants.PREF_CRONTAB_HASH;
 import static it.faerb.crond.Constants.PREF_ENABLED;
 
 
-public class Crond {
+class Crond {
 
     private static final String TAG = "Crond";
 
@@ -45,7 +45,6 @@ public class Crond {
     private final CronDescriptor descriptor = CronDescriptor.instance(Locale.getDefault());
 
     private Context context = null;
-    private IO io = null;
     private AlarmManager alarmManager = null;
     private SharedPreferences sharedPrefs = null;
     private String crontab = "";
@@ -53,9 +52,8 @@ public class Crond {
     private static final String PREF_CRONTAB_LINE_COUNT = "old_tab_line_count";
     private static final String HASH_ALGO = "sha-256";
 
-    public Crond(Context context, IO io) {
+    public Crond(Context context) {
         this.context = context;
-        this.io = io;
         alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         sharedPrefs = context.getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE);
     }
@@ -74,7 +72,7 @@ public class Crond {
         }
         if (!hashedTab.equals(sharedPrefs.getString(PREF_CRONTAB_HASH, ""))
                 && !crontab.equals("")) {
-            io.logToLogFile(context.getString(R.string.log_crontab_change_detected));
+            IO.logToLogFile(context.getString(R.string.log_crontab_change_detected));
             scheduleCrontab();
             sharedPrefs.edit().putString(PREF_CRONTAB_HASH, hashedTab).apply();
         }
@@ -120,7 +118,7 @@ public class Crond {
                 PendingIntent.FLAG_UPDATE_CURRENT); // update current to replace the one used
                                                     // for cancelling any previous set alarms
         alarmManager.set(AlarmManager.RTC_WAKEUP, next.getMillis(), alarmIntent);
-        io.logToLogFile(context.getString(R.string.log_scheduled, lineNo,
+        IO.logToLogFile(context.getString(R.string.log_scheduled, lineNo,
                 DateTimeFormat.forPattern("YYYY-MM-dd HH:mm:ss.SSSS").print(next)));
     }
 
@@ -129,9 +127,9 @@ public class Crond {
         if (parsedLine == null) {
             return;
         }
-        io.logToLogFile(context.getString(R.string.log_execute_pre, lineNo));
-        io.executeCommand(parsedLine.runExpr);
-        io.logToLogFile(context.getString(R.string.log_execute_post, lineNo));
+        IO.logToLogFile(context.getString(R.string.log_execute_pre, lineNo));
+        IO.executeCommand(parsedLine.runExpr);
+        IO.logToLogFile(context.getString(R.string.log_execute_post, lineNo));
     }
 
     private SpannableStringBuilder describeLine(String line) {
@@ -191,8 +189,8 @@ public class Crond {
     }
 
     private class ParsedLine {
-        String cronExpr;
-        String runExpr;
+        final String cronExpr;
+        final String runExpr;
         ParsedLine(String cronExpr, String runExpr) {
             this.cronExpr = cronExpr;
             this.runExpr = runExpr;

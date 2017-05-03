@@ -37,7 +37,6 @@
         android:visibility="gone"/>
 
     <TextView
-        android:id="@+id/text_label_crond_log"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="5dp"

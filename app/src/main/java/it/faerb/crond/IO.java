@@ -1,6 +1,5 @@
 package it.faerb.crond;
 
-import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -11,9 +10,7 @@ import java.util.List;
 
 import eu.chainfire.libsuperuser.Shell;
 
-import static android.content.Context.MODE_PRIVATE;
-
-public class IO {
+class IO {
 
     private static final String TAG = "IO";
 
@@ -23,21 +20,7 @@ public class IO {
     private static final String LOG_FILE_NAME = "crond.log";
     private static final String LOG_DEBUG_FILE_NAME = "crond-debug.log";
 
-
-    private Context context = null;
-
-
-    public IO(Context context) {
-        this.context = context;
-        reload();
-    }
-
-    public void reload() {
-        /*use_root = context.getSharedPreferences(PREFERENCES_FILE, MODE_PRIVATE)
-                .getBoolean(PREF_USE_ROOT, false);*/
-    }
-
-    public String getLogPath() {
+    public static String getLogPath() {
         if (BuildConfig.DEBUG) {
             return new File(ROOT_PREFIX, LOG_DEBUG_FILE_NAME).getAbsolutePath();
         }
@@ -46,7 +29,7 @@ public class IO {
         }
     }
 
-    public String getCrontabPath() {
+    public static String getCrontabPath() {
         if (BuildConfig.DEBUG) {
             return new File(ROOT_PREFIX, CRONTAB_DEBUG_FILE_NAME).getAbsolutePath();
         }
@@ -55,15 +38,15 @@ public class IO {
         }
     }
 
-    void clearLogFile() {
+    static void clearLogFile() {
         Log.i(TAG, executeCommand("echo -n \"\" > " + getLogPath()));
     }
 
-    String readFileContents(String filePath) {
+    static String readFileContents(String filePath) {
         return executeCommand("cat " + filePath);
     }
 
-    String executeCommand(String cmd) {
+    static String executeCommand(String cmd) {
         List<String> output = Shell.SU.run(cmd);
         if (output != null) {
             return TextUtils.join("\n", output);
@@ -73,7 +56,7 @@ public class IO {
         }
     }
 
-    void logToLogFile(String msg) {
+    static void logToLogFile(String msg) {
         msg = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSS").format(new Date()) + " " + msg;
         Log.i(TAG, executeCommand("echo \"" + msg + "\" >> " + getLogPath()));
     }

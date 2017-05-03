@@ -32,8 +32,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 
         @Override
         protected Void doInBackground(Intent... intent) {
-            IO io = new IO(super.context);
-            Crond crond = new Crond(super.context, io);
+            Crond crond = new Crond(super.context);
             String line = intent[0].getExtras().getString(INTENT_EXTRA_LINE_NAME);
             int lineNo = intent[0].getExtras().getInt(INTENT_EXTRA_LINE_NO_NAME);
             crond.executeLine(line, lineNo);

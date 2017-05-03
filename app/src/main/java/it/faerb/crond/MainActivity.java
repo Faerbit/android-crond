@@ -24,9 +24,8 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
 
-    private Handler refreshHandler = new Handler();
+    private final Handler refreshHandler = new Handler();
 
-    private IO io = null;
     private Crond crond = null;
 
     private SharedPreferences sharedPrefs = null;
@@ -42,7 +41,8 @@ public class MainActivity extends AppCompatActivity {
     private class RootChecker extends AsyncTask<Void, Void, Boolean> {
         @Override
         protected Boolean doInBackground(Void... params) {
-            return Shell.SU.available();
+            rootAvailable = Shell.SU.available();
+            return rootAvailable;
         }
 
         @Override
@@ -54,8 +54,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void init() {
-        io = new IO(this);
-        crond = new Crond(this, io);
+        crond = new Crond(this);
         sharedPrefs = getSharedPreferences(PREFERENCES_FILE, MODE_PRIVATE);
 
         LinearLayout layout = (LinearLayout) findViewById(R.id.root_layout);
@@ -65,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
             view.setVisibility(VISIBLE);
         }
         final TextView crontabLabel = (TextView) findViewById(R.id.text_label_crontab);
-        crontabLabel.setText(getString(R.string.crontab_label, io.getCrontabPath()));
+        crontabLabel.setText(getString(R.string.crontab_label, IO.getCrontabPath()));
 
         final TextView crontabContent = (TextView) findViewById(R.id.text_content_crontab);
         crontabContent.setMovementMethod(new ScrollingMovementMethod());
@@ -175,10 +174,10 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected CharSequence[] doInBackground(Void... params) {
             CharSequence[] ret = new CharSequence[2];
-            crond.setCrontab(io.readFileContents(io.getCrontabPath()));
+            crond.setCrontab(IO.readFileContents(IO.getCrontabPath()));
             ret[0] = crond.processCrontab();
 
-            ret[1] = io.readFileContents(io.getLogPath());
+            ret[1] = IO.readFileContents(IO.getLogPath());
             return ret;
         }
 
@@ -195,7 +194,7 @@ public class MainActivity extends AppCompatActivity {
     private class LogClearer extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... params) {
-            io.clearLogFile();
+            IO.clearLogFile();
             return null;
         }
     }
