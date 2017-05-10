@@ -72,8 +72,12 @@ class Crond {
         }
         if (!hashedTab.equals(sharedPrefs.getString(PREF_CRONTAB_HASH, ""))
                 && !crontab.equals("")) {
-            IO.logToLogFile(context.getString(R.string.log_crontab_change_detected));
-            scheduleCrontab();
+            // only schedule when enabled
+            if (sharedPrefs.getBoolean(PREF_ENABLED, false)) {
+                IO.logToLogFile(context.getString(R.string.log_crontab_change_detected));
+                scheduleCrontab();
+            }
+            // save in any case such that on installation the crontab is not "new"
             sharedPrefs.edit().putString(PREF_CRONTAB_HASH, hashedTab).apply();
         }
         if (crontab.equals("")) {
@@ -93,6 +97,7 @@ class Crond {
 
     public void scheduleCrontab() {
         cancelAllAlarms(sharedPrefs.getInt(PREF_CRONTAB_LINE_COUNT, 0));
+        // check here, because this can get called directly
         if (!sharedPrefs.getBoolean(PREF_ENABLED, false)) {
             return;
         }

@@ -5,6 +5,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import static android.content.Context.MODE_PRIVATE;
+import static it.faerb.crond.Constants.PREFERENCES_FILE;
+import static it.faerb.crond.Constants.PREF_ENABLED;
+
 public class BootCompleteReceiver extends BroadcastReceiver {
 
     private static final String TAG = "BootCompleteReceiver";
@@ -17,6 +21,10 @@ public class BootCompleteReceiver extends BroadcastReceiver {
         if (!intent.getAction().equals(BOOT_ACTION_STRING)){
             Log.e(TAG, "Invalid action string: \"" + intent.getAction()
                     + "\" should be \"" + BOOT_ACTION_STRING + "\"");
+            return;
+        }
+        if (!context.getSharedPreferences(PREFERENCES_FILE, MODE_PRIVATE)
+                .getBoolean(PREF_ENABLED, false)) {
             return;
         }
         Crond crond = new Crond(context);
