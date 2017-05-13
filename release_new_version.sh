@@ -24,4 +24,4 @@ sed -i "s/versionCode [0-9]*$/versionCode $new_version_code/" app/build.gradle
 
 git add app/build.gradle
 git commit -m "Bumping version to $new_version_name."
-git tag $new_version_name
+git tag -s $new_version_name -m "Bumping version to $new_version_name."
