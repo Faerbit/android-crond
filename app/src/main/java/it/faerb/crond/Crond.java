@@ -28,6 +28,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Locale;
+import java.util.MissingResourceException;
 
 import static it.faerb.crond.Constants.INTENT_EXTRA_LINE_NAME;
 import static it.faerb.crond.Constants.INTENT_EXTRA_LINE_NO_NAME;
@@ -42,7 +43,7 @@ class Crond {
 
     private final CronParser parser =
             new CronParser(CronDefinitionBuilder.instanceDefinitionFor(CronType.UNIX));
-    private final CronDescriptor descriptor = CronDescriptor.instance(Locale.getDefault());
+    private CronDescriptor descriptor = null;
 
     private Context context = null;
     private AlarmManager alarmManager = null;
@@ -56,6 +57,14 @@ class Crond {
         this.context = context;
         alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         sharedPrefs = context.getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE);
+        try {
+            descriptor = CronDescriptor.instance(Locale.getDefault());
+        }
+        catch (MissingResourceException e) {
+            Log.w(TAG, "Cannot find locale \"" + Locale.getDefault().toString()
+                    + "\". Switching to default locale.");
+            descriptor = CronDescriptor.instance();
+        }
     }
 
     public SpannableStringBuilder processCrontab() {
