@@ -1,5 +1,8 @@
 # Changelog
 
+## v1.2.9
+ * Added spanish translation by @Eskuero
+
 ## v1.2.8
  * Added japanese translation by @naofum
 
