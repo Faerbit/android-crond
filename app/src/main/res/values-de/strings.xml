@@ -8,12 +8,13 @@
     <string name="run">Starte</string>
     <string name="yes">Ja</string>
     <string name="log_boot">Boot abgeschlossen. Plane crontab:</string>
-    <string name="log_execute_post">Zeile %1$d ausgeführt</string>
-    <string name="log_execute_pre">Starte Zeile %1$d</string>
-    <string name="log_scheduled">Plane Zeile %1$d um %2$s</string>
     <string name="log_crontab_change_detected">crontab-Veränderung entdeckt. Plane neuen crontab:</string>
     <string name="button_label_disabled">Aktiviere crond</string>
     <string name="button_label_enabled">Deaktiviere crond</string>
     <string name="root_required">Root-Rechte sind erforderlich, damit diese App funktioniert.</string>
     <string name="reopen_hint">Öffne diese App, damit Änderungen im crontab angewendet werden.</string>
+    <string name="check_label_notification">Benachrichtige nach Ausführung</string>
+    <string name="log_execute_post_v2">Zeile %1$d: \'%2$s\' ausgeführt exit code: %3$d</string>
+    <string name="log_execute_pre_v2">Führe Zeile %1$d: \'%2$s\' aus</string>
+    <string name="log_scheduled_v2">Plane Zeile %1$d: \'%2$s\' um %3$s</string>
 </resources>
