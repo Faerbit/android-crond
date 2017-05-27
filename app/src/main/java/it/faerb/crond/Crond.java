@@ -132,7 +132,7 @@ class Crond {
                 PendingIntent.FLAG_UPDATE_CURRENT); // update current to replace the one used
                                                     // for cancelling any previous set alarms
         alarmManager.set(AlarmManager.RTC_WAKEUP, next.getMillis(), alarmIntent);
-        IO.logToLogFile(context.getString(R.string.log_scheduled, lineNo,
+        IO.logToLogFile(context.getString(R.string.log_scheduled_v2, lineNo + 1, parsedLine.runExpr,
                 DateTimeFormat.forPattern("YYYY-MM-dd HH:mm:ss.SSSS").print(next)));
     }
 
@@ -141,9 +141,11 @@ class Crond {
         if (parsedLine == null) {
             return;
         }
-        IO.logToLogFile(context.getString(R.string.log_execute_pre, lineNo));
+        IO.logToLogFile(context.getString(R.string.log_execute_pre_v2, lineNo + 1,
+                parsedLine.runExpr));
         IO.executeCommand(parsedLine.runExpr);
-        IO.logToLogFile(context.getString(R.string.log_execute_post, lineNo));
+        IO.logToLogFile(context.getString(R.string.log_execute_post_v2, lineNo + 1,
+                parsedLine.runExpr));
     }
 
     private SpannableStringBuilder describeLine(String line) {
