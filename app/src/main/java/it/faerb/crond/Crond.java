@@ -34,6 +34,7 @@ import static it.faerb.crond.Constants.INTENT_EXTRA_LINE_NO_NAME;
 import static it.faerb.crond.Constants.PREFERENCES_FILE;
 import static it.faerb.crond.Constants.PREF_CRONTAB_HASH;
 import static it.faerb.crond.Constants.PREF_ENABLED;
+import static it.faerb.crond.Constants.PREF_NOTIFICATION_ENABLED;
 import static it.faerb.crond.Util.getColor;
 
 
@@ -144,10 +145,13 @@ class Crond {
         IO.logToLogFile(context.getString(R.string.log_execute_pre_v2, lineNo + 1,
                 parsedLine.runExpr));
         IO.CommandResult res = IO.executeCommand(parsedLine.runExpr);
-        IO.logToLogFile(context.getString(R.string.log_execute_post_v2, lineNo + 1,
-                parsedLine.runExpr, res.getExitCode()));
+        String log = context.getString(R.string.log_execute_post_v2, lineNo + 1,
+                parsedLine.runExpr, res.getExitCode());
+        IO.logToLogFile(log);
+        if (sharedPrefs.getBoolean(PREF_NOTIFICATION_ENABLED, false)) {
+            MainActivity.showNotification(context, log);
+        }
     }
-
     private SpannableStringBuilder describeLine(String line) {
         SpannableStringBuilder ret = new SpannableStringBuilder();
         ParsedLine parsedLine = parseLine(line);

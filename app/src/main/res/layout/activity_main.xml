@@ -59,6 +59,17 @@
         android:enabled="false"
         android:visibility="gone"/>
 
+    <CheckBox
+        android:id="@+id/check_notification_setting"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_gravity="end"
+        android:text="@string/check_label_notification"
+        android:enabled="false"
+        android:visibility="gone"/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

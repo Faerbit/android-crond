@@ -1,7 +1,10 @@
 package it.faerb.crond;
 
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -9,9 +12,12 @@ import android.os.Handler;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.NotificationCompat;
 import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -20,6 +26,7 @@ import eu.chainfire.libsuperuser.Shell;
 import static android.view.View.VISIBLE;
 import static it.faerb.crond.Constants.PREFERENCES_FILE;
 import static it.faerb.crond.Constants.PREF_ENABLED;
+import static it.faerb.crond.Constants.PREF_NOTIFICATION_ENABLED;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -72,6 +79,17 @@ public class MainActivity extends AppCompatActivity {
 
         final TextView crondLog = (TextView) findViewById(R.id.text_content_crond_log);
         crondLog.setMovementMethod(new ScrollingMovementMethod());
+
+        final CheckBox notificationCheckBox = (CheckBox) findViewById(
+                R.id.check_notification_setting);
+        notificationCheckBox.setChecked(sharedPrefs.getBoolean(PREF_NOTIFICATION_ENABLED, false));
+        notificationCheckBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                sharedPrefs.edit().putBoolean(PREF_NOTIFICATION_ENABLED,
+                        notificationCheckBox.isChecked()).apply();
+            }
+        });
 
         final Button enableButton = (Button) findViewById(R.id.button_enable);
         enableButton.setOnClickListener(new View.OnClickListener() {
@@ -144,6 +162,24 @@ public class MainActivity extends AppCompatActivity {
             crondLog.setBackgroundColor(Util.getColor(this, R.color.colorBackgroundInactive));
             enableButton.setText(getString(R.string.button_label_disabled));
         }
+    }
+
+    static public void showNotification(Context context, String msg) {
+        NotificationManager notificationManager =
+                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        Intent intent = new Intent(context, MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+        notificationManager.notify(1,
+                new NotificationCompat.Builder(context)
+                        .setSmallIcon(R.drawable.ic_notification_icon)
+                        .setColor(Util.getColor(context, R.color.colorPrimary))
+                        .setContentTitle(context.getString(R.string.app_name))
+                        .setContentText(msg)
+                        .setContentIntent(pendingIntent)
+                        .setStyle(new NotificationCompat.BigTextStyle()
+                                .bigText(msg))
+                        .build());
     }
 
     private final Runnable refresh = new Runnable() {
