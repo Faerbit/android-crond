@@ -7,10 +7,11 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.Semaphore;
 
 import eu.chainfire.libsuperuser.Shell;
 
-class IO {
+class IO implements Shell.OnCommandResultListener {
 
     private static final String TAG = "IO";
 
@@ -39,25 +40,73 @@ class IO {
     }
 
     static void clearLogFile() {
-        Log.i(TAG, executeCommand("echo -n \"\" > " + getLogPath()));
+        Log.i(TAG, executeCommand("echo -n \"\" > " + getLogPath()).getOutput());
     }
 
     static String readFileContents(String filePath) {
-        return executeCommand("cat " + filePath);
+        return executeCommand("cat " + filePath).getOutput();
     }
 
-    static String executeCommand(String cmd) {
-        List<String> output = Shell.SU.run(cmd);
-        if (output != null) {
-            return TextUtils.join("\n", output);
+    synchronized static CommandResult executeCommand(String cmd) {
+        get().shell.addCommand(cmd, 0, get());
+        get().cmdReturned.acquireUninterruptibly();
+        if (!get().lastResult.success()) {
+            Log.w(TAG, String.format("Error while executing command:\"%sx\":\n%s",
+                    cmd, get().lastResult.getOutput()));
         }
-        else {
-            return "Error when executing cmd:" + cmd;
-        }
+        return get().lastResult;
     }
 
     static void logToLogFile(String msg) {
         msg = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSS").format(new Date()) + " " + msg;
-        Log.i(TAG, executeCommand("echo \"" + msg + "\" >> " + getLogPath()));
+        Log.i(TAG, executeCommand("echo \"" + msg + "\" >> " + getLogPath()).getOutput());
+    }
+
+    class CommandResult {
+        private int exitCode;
+        private String output;
+        CommandResult(int returnCode, List<String> output) {
+            this.exitCode = returnCode;
+            this.output = TextUtils.join("\n", output);
+        }
+
+        boolean success() {
+            return exitCode == 0;
+        }
+
+        int getExitCode() {
+            return exitCode;
+        }
+
+        public String getOutput() {
+            return output;
+        }
+    }
+
+    private static IO instance = null;
+    private CommandResult lastResult = null;
+    private Shell.Interactive shell = null;
+    private Semaphore cmdReturned = new Semaphore(0);
+
+    IO() {
+        shell = new Shell.Builder()
+                .useSU()
+                .setMinimalLogging(BuildConfig.DEBUG)
+                .open();
+    }
+
+    public static IO get() {
+        if (instance == null) {
+            synchronized (IO.class) {
+                return instance = new IO();
+            }
+        }
+        return instance;
+}
+
+    @Override
+    public void onCommandResult(int commandCode, int exitCode, List<String> output) {
+        get().lastResult = new CommandResult(exitCode, output);
+        get().cmdReturned.release();
     }
 }
