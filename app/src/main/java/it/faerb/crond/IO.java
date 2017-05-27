@@ -51,7 +51,7 @@ class IO implements Shell.OnCommandResultListener {
         get().shell.addCommand(cmd, 0, get());
         get().shell.waitForIdle();
         if (!get().lastResult.success()) {
-            Log.w(TAG, String.format("Error while executing command:\"%sx\":\n%s",
+            Log.w(TAG, String.format("Error while executing command:\"%s\":\n%s",
                     cmd, get().lastResult.getOutput()));
         }
         return get().lastResult;
