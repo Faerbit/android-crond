@@ -12,7 +12,7 @@
     <string name="invalid_cron">Invalid cron expression</string>
     <string name="log_scheduled_v2">Scheduled line %1$d: \'%2$s\' at %3$s</string>
     <string name="log_execute_pre_v2">Execute line %1$d: \'%2$s\'</string>
-    <string name="log_execute_post_v2">Executed line %1$d: \'%2$s\'</string>
+    <string name="log_execute_post_v2">Executed line %1$d: \'%2$s\' exit code: %3$d</string>
     <string name="log_boot">Boot completed. Scheduling crontab:</string>
     <string name="log_crontab_change_detected">Crontab change detected. Scheduling new crontab:</string>
     <string name="crontab_label" translatable="false">crontab %s:</string>

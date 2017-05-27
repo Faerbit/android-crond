@@ -143,9 +143,9 @@ class Crond {
         }
         IO.logToLogFile(context.getString(R.string.log_execute_pre_v2, lineNo + 1,
                 parsedLine.runExpr));
-        IO.executeCommand(parsedLine.runExpr);
+        IO.CommandResult res = IO.executeCommand(parsedLine.runExpr);
         IO.logToLogFile(context.getString(R.string.log_execute_post_v2, lineNo + 1,
-                parsedLine.runExpr));
+                parsedLine.runExpr, res.getExitCode()));
     }
 
     private SpannableStringBuilder describeLine(String line) {
