@@ -2,7 +2,7 @@
 
 ## v1.2.10
  * Report exit code of executed commands
- * Added option to create notfication after command execution
+ * Added option to create notification after command execution
 
 ## v1.2.9
  * Added spanish translation by @Eskuero

@@ -63,8 +63,8 @@ class IO implements Shell.OnCommandResultListener {
     }
 
     class CommandResult {
-        private int exitCode;
-        private String output;
+        private final int exitCode;
+        private final String output;
         CommandResult(int returnCode, List<String> output) {
             this.exitCode = returnCode;
             this.output = TextUtils.join("\n", output);
@@ -86,9 +86,8 @@ class IO implements Shell.OnCommandResultListener {
     private static IO instance = null;
     private CommandResult lastResult = null;
     private Shell.Interactive shell = null;
-    private Semaphore cmdReturned = new Semaphore(0);
 
-    IO() {
+    private IO() {
         shell = new Shell.Builder()
                 .useSU()
                 .setHandler(null)
@@ -97,7 +96,7 @@ class IO implements Shell.OnCommandResultListener {
                 .open();
     }
 
-    public static IO get() {
+    private static IO get() {
         if (instance == null) {
             synchronized (IO.class) {
                 return instance = new IO();

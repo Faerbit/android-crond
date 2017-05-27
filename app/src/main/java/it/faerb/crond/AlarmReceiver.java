@@ -14,7 +14,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        new LineExecuter(context).execute(intent);
+        new LineExecutor(context).execute(intent);
     }
 
     private abstract class CrondAsyncTask extends AsyncTask<Intent, Void, Void> {
@@ -25,8 +25,8 @@ public class AlarmReceiver extends BroadcastReceiver {
         }
     }
 
-    private class LineExecuter extends CrondAsyncTask {
-        public LineExecuter(Context context) {
+    private class LineExecutor extends CrondAsyncTask {
+        public LineExecutor(Context context) {
             super(context);
         }
 
