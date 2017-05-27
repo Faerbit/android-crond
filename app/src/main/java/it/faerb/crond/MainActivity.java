@@ -129,8 +129,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateEnabled() {
-        boolean enabled = getSharedPreferences(PREFERENCES_FILE, MODE_PRIVATE)
-                .getBoolean(PREF_ENABLED, false);
+        boolean enabled = sharedPrefs.getBoolean(PREF_ENABLED, false);
         final TextView crontabContent = (TextView) findViewById(R.id.text_content_crontab);
         final TextView crondLog = (TextView) findViewById(R.id.text_content_crond_log);
         final Button enableButton = (Button) findViewById(R.id.button_enable);
