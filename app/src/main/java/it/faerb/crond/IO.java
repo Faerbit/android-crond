@@ -49,7 +49,7 @@ class IO implements Shell.OnCommandResultListener {
 
     synchronized static CommandResult executeCommand(String cmd) {
         get().shell.addCommand(cmd, 0, get());
-        get().cmdReturned.acquireUninterruptibly();
+        get().shell.waitForIdle();
         if (!get().lastResult.success()) {
             Log.w(TAG, String.format("Error while executing command:\"%sx\":\n%s",
                     cmd, get().lastResult.getOutput()));
@@ -91,6 +91,8 @@ class IO implements Shell.OnCommandResultListener {
     IO() {
         shell = new Shell.Builder()
                 .useSU()
+                .setHandler(null)
+                .setAutoHandler(false)
                 .setMinimalLogging(BuildConfig.DEBUG)
                 .open();
     }
@@ -102,11 +104,10 @@ class IO implements Shell.OnCommandResultListener {
             }
         }
         return instance;
-}
+    }
 
     @Override
     public void onCommandResult(int commandCode, int exitCode, List<String> output) {
         get().lastResult = new CommandResult(exitCode, output);
-        get().cmdReturned.release();
     }
 }
