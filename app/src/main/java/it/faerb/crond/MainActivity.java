@@ -1,5 +1,6 @@
 package it.faerb.crond;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -135,29 +136,13 @@ public class MainActivity extends AppCompatActivity {
         final Button enableButton = (Button) findViewById(R.id.button_enable);
 
         if (enabled) {
-            if (Build.VERSION.SDK_INT >= 23) {
-                crontabContent.setBackgroundColor(getColor(R.color.colorBackgroundActive));
-                crondLog.setBackgroundColor(getColor(R.color.colorBackgroundActive));
-            }
-            else {
-                crontabContent.setBackgroundColor(getResources()
-                        .getColor(R.color.colorBackgroundActive));
-                crondLog.setBackgroundColor(getResources()
-                        .getColor(R.color.colorBackgroundActive));
-            }
+            crontabContent.setBackgroundColor(Util.getColor(this, R.color.colorBackgroundActive));
+            crondLog.setBackgroundColor(Util.getColor(this, R.color.colorBackgroundActive));
             enableButton.setText(getString(R.string.button_label_enabled));
         }
         else {
-            if (Build.VERSION.SDK_INT >= 23) {
-                crontabContent.setBackgroundColor(getColor(R.color.colorBackgroundInactive));
-                crondLog.setBackgroundColor(getColor(R.color.colorBackgroundInactive));
-            }
-            else {
-                crontabContent.setBackgroundColor(getResources()
-                        .getColor(R.color.colorBackgroundInactive));
-                crondLog.setBackgroundColor(getResources()
-                        .getColor(R.color.colorBackgroundInactive));
-            }
+            crontabContent.setBackgroundColor(Util.getColor(this, R.color.colorBackgroundInactive));
+            crondLog.setBackgroundColor(Util.getColor(this, R.color.colorBackgroundInactive));
             enableButton.setText(getString(R.string.button_label_disabled));
         }
     }

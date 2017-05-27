@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
-import android.os.Build;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -35,6 +34,7 @@ import static it.faerb.crond.Constants.INTENT_EXTRA_LINE_NO_NAME;
 import static it.faerb.crond.Constants.PREFERENCES_FILE;
 import static it.faerb.crond.Constants.PREF_CRONTAB_HASH;
 import static it.faerb.crond.Constants.PREF_ENABLED;
+import static it.faerb.crond.Util.getColor;
 
 
 class Crond {
@@ -163,16 +163,9 @@ class Crond {
             ret.append(descriptor.describe(parser.parse(parsedLine.cronExpr)) + "\n",
                     new StyleSpan(Typeface.ITALIC), Spanned.SPAN_COMPOSING);
         }
-        if (Build.VERSION.SDK_INT >= 23) {
             ret.setSpan(new ForegroundColorSpan(
-                            context.getColor(R.color.colorPrimaryDark)), 0,
+                            getColor(context, R.color.colorPrimaryDark)), 0,
                     ret.length(), Spanned.SPAN_COMPOSING);
-        }
-        else {
-            ret.setSpan(new ForegroundColorSpan(
-                            context.getResources().getColor(R.color.colorPrimaryDark)), 0,
-                    ret.length(), Spanned.SPAN_COMPOSING);
-        }
         return ret;
     }
 
