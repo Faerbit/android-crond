@@ -15,4 +15,5 @@
     <string name="log_crontab_change_detected">Crontab の変更を検知しました。 新しい crontab をスケジュールします:</string>
     <string name="root_required">このアプリの実行は Root 化が必要です。</string>
     <string name="reopen_hint">crontab の変更を適用するにはこのアプリを開いてください。</string>
+    <string name="check_label_notification">実行後に通知を作成</string>
 </resources>
