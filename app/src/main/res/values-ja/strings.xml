@@ -8,11 +8,12 @@
     <string name="button_label_disabled">crond を有効にする</string>
     <string name="run">実行</string>
     <string name="invalid_cron">cron 式が無効です</string>
-    <string name="log_scheduled">行 %1$d を %2$s にスケジュールしました</string>
-    <string name="log_execute_pre">行 %1$d を実行</string>
-    <string name="log_execute_post">行 %1$d を実行しました</string>
+    <string name="log_scheduled_v2">行 %1$d をスケジュールしました: \'%2$s\' 日時 %3$s</string>
+    <string name="log_execute_pre_v2">行 %1$d を実行します: \'%2$s\'</string>
+    <string name="log_execute_post_v2">行 %1$d を実行しました: \'%2$s\' 終了コード: %3$d</string>
     <string name="log_boot">起動が完了しました。 crontab をスケジュールします:</string>
     <string name="log_crontab_change_detected">Crontab の変更を検知しました。 新しい crontab をスケジュールします:</string>
     <string name="root_required">このアプリの実行は Root 化が必要です。</string>
     <string name="reopen_hint">crontab の変更を適用するにはこのアプリを開いてください。</string>
+    <string name="check_label_notification">実行後に通知を作成</string>
 </resources>
