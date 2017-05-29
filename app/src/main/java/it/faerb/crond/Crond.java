@@ -21,6 +21,7 @@ import com.cronutils.model.time.ExecutionTime;
 import com.cronutils.parser.CronParser;
 
 import org.joda.time.DateTime;
+import org.joda.time.IllegalFieldValueException;
 import org.joda.time.format.DateTimeFormat;
 
 import java.security.MessageDigest;
@@ -124,7 +125,13 @@ class Crond {
         if (parsedLine == null) {
             return;
         }
-        ExecutionTime time = ExecutionTime.forCron(parser.parse(parsedLine.cronExpr));
+        ExecutionTime time;
+        try {
+            time = ExecutionTime.forCron(parser.parse(parsedLine.cronExpr));
+        }
+        catch (IllegalArgumentException e) {
+            return;
+        }
         DateTime next = time.nextExecution(DateTime.now());
         Intent intent = new Intent(context, AlarmReceiver.class);
         intent.putExtra(INTENT_EXTRA_LINE_NAME, line);
@@ -155,21 +162,32 @@ class Crond {
     private SpannableStringBuilder describeLine(String line) {
         SpannableStringBuilder ret = new SpannableStringBuilder();
         ParsedLine parsedLine = parseLine(line);
+        boolean invalid = false;
         if (parsedLine == null) {
+            invalid = true;
+        }
+        else {
+            try {
+                ret.append(context.getResources().getString(R.string.run) + " ",
+                        new StyleSpan(Typeface.ITALIC), Spanned.SPAN_COMPOSING);
+                ret.append(parsedLine.runExpr + " ",
+                        new TypefaceSpan("monospace"), Spanned.SPAN_COMPOSING);
+                ret.append(descriptor.describe(parser.parse(parsedLine.cronExpr)) + "\n",
+                        new StyleSpan(Typeface.ITALIC), Spanned.SPAN_COMPOSING);
+            }
+            catch (IllegalArgumentException e) {
+                ret = new SpannableStringBuilder();
+                invalid = true;
+            }
+        }
+        if (invalid) {
             ret.append(context.getResources().getString(R.string.invalid_cron) + "\n",
                     new StyleSpan(Typeface.ITALIC), Spanned.SPAN_COMPOSING);
         }
-        else {
-            ret.append(context.getResources().getString(R.string.run) + " ",
-                    new StyleSpan(Typeface.ITALIC), Spanned.SPAN_COMPOSING);
-            ret.append(parsedLine.runExpr + " ",
-                    new TypefaceSpan("monospace"), Spanned.SPAN_COMPOSING);
-            ret.append(descriptor.describe(parser.parse(parsedLine.cronExpr)) + "\n",
-                    new StyleSpan(Typeface.ITALIC), Spanned.SPAN_COMPOSING);
-        }
-            ret.setSpan(new ForegroundColorSpan(
-                            getColor(context, R.color.colorPrimaryDark)), 0,
-                    ret.length(), Spanned.SPAN_COMPOSING);
+
+        ret.setSpan(new ForegroundColorSpan(
+                        getColor(context, R.color.colorPrimaryDark)), 0,
+                ret.length(), Spanned.SPAN_COMPOSING);
         return ret;
     }
 
