@@ -131,7 +131,7 @@ class Crond {
         PendingIntent alarmIntent = PendingIntent.getBroadcast(context, lineNo, intent,
                 PendingIntent.FLAG_UPDATE_CURRENT); // update current to replace the one used
                                                     // for cancelling any previous set alarms
-        alarmManager.set(AlarmManager.RTC_WAKEUP, next.getMillis(), alarmIntent);
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, next.getMillis(), alarmIntent);
         IO.logToLogFile(context.getString(R.string.log_scheduled, lineNo,
                 DateTimeFormat.forPattern("YYYY-MM-dd HH:mm:ss.SSSS").print(next)));
     }
