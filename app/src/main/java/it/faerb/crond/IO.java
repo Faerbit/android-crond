@@ -3,6 +3,9 @@ package it.faerb.crond;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.google.common.escape.Escaper;
+import com.google.common.escape.Escapers;
+
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -57,9 +60,17 @@ class IO implements Shell.OnCommandResultListener {
         return get().lastResult;
     }
 
+    private static final Escaper shellEscaper;
+    static {
+        final Escapers.Builder builder = Escapers.builder();
+        builder.addEscape('\'', "'\"'\"'");
+        shellEscaper = builder.build();
+    }
+
     static void logToLogFile(String msg) {
         msg = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSS").format(new Date()) + " " + msg;
-        Log.i(TAG, executeCommand("echo \"" + msg + "\" >> " + getLogPath()).getOutput());
+        Log.i(TAG, executeCommand("echo \'" + shellEscaper.escape(msg) + "\' >> "
+                + getLogPath()).getOutput());
     }
 
     class CommandResult {
