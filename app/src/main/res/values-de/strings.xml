@@ -17,4 +17,5 @@
     <string name="log_execute_post_v2">Zeile %1$d: \'%2$s\' ausgeführt exit code: %3$d</string>
     <string name="log_execute_pre_v2">Führe Zeile %1$d: \'%2$s\' aus</string>
     <string name="log_scheduled_v2">Plane Zeile %1$d: \'%2$s\' um %3$s</string>
+    <string name="check_label_wakelock">Benutze Wake Lock zur Ausführung des Skriptes</string>
 </resources>

@@ -26,6 +26,7 @@ import static android.view.View.VISIBLE;
 import static it.faerb.crond.Constants.PREFERENCES_FILE;
 import static it.faerb.crond.Constants.PREF_ENABLED;
 import static it.faerb.crond.Constants.PREF_NOTIFICATION_ENABLED;
+import static it.faerb.crond.Constants.PREF_USE_WAKE_LOCK;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -87,6 +88,17 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 sharedPrefs.edit().putBoolean(PREF_NOTIFICATION_ENABLED,
                         notificationCheckBox.isChecked()).apply();
+            }
+        });
+
+        final CheckBox wakeLockCheckBox = (CheckBox) findViewById(
+                R.id.check_wakelock_setting);
+        wakeLockCheckBox.setChecked(sharedPrefs.getBoolean(PREF_USE_WAKE_LOCK, false));
+        wakeLockCheckBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sharedPrefs.edit().putBoolean(PREF_USE_WAKE_LOCK,
+                        wakeLockCheckBox.isChecked()).apply();
             }
         });
 
