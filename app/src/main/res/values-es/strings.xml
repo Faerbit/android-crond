@@ -8,11 +8,13 @@
     <string name="button_label_disabled">Activar crond</string>
     <string name="run">Iniciar</string>
     <string name="invalid_cron">Sintaxis de cron inválida</string>
-    <string name="log_scheduled">Línea %1$d programada para %2$s</string>
-    <string name="log_execute_pre">Ejecutando línea %1$d</string>
-    <string name="log_execute_post">Línea %1$d ejecutada</string>
+    <string name="log_scheduled_v2">Línea %1$d: \'%2$s\' programada para %3$s</string>
+    <string name="log_execute_pre_v2">Ejecutando línea %1$d: \'%2$s\'</string>
+    <string name="log_execute_post_v2">Linea %1$d: \'%2$s\' ejecutada. Resultado: %3$d</string>
     <string name="log_boot">Arranque completo. Programando crontab:</string>
-    <string name="log_crontab_change_detected">Cambio detectado en crontab. Reprogramando crontab:</string>
+    <string name="log_crontab_change_detected">Cambio detectado en crontab. Reprogramando:</string>
     <string name="root_required">Son necesarios permisos de superusuario.</string>
     <string name="reopen_hint">Abre la aplicación para que los cambios realizando en crontab se apliquen.</string>
+    <string name="check_label_notification">Mostrar notificación tras ejecución</string>
+    <string name="check_label_wakelock">Mantener encendido para ejecución del script</string>
 </resources>
