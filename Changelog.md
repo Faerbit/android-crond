@@ -3,6 +3,7 @@
 ## v1.2.10
  * Report exit code of executed commands
  * Added option to create notification after command execution
+ * Added option to use wake lock for script execution
  * Fixed force closing for incorrect cron expressions
 
 ## v1.2.9
