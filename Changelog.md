@@ -1,5 +1,8 @@
 # Changelog
 
+## v1.2.11
+ * Updated japanese translation
+
 ## v1.2.10
  * Report exit code of executed commands
  * Added option to create notification after command execution
