@@ -75,8 +75,8 @@ android {
         applicationId "it.faerb.crond"
         minSdkVersion 21
         targetSdkVersion 23
-        versionCode 14
-        versionName "v1.2.10"
+        versionCode 15
+        versionName "v1.2.11"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
