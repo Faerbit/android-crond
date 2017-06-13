@@ -16,4 +16,5 @@
     <string name="root_required">このアプリの実行は Root 化が必要です。</string>
     <string name="reopen_hint">crontab の変更を適用するにはこのアプリを開いてください。</string>
     <string name="check_label_notification">実行後に通知を作成</string>
+    <string name="check_label_wakelock">スクリプト実行の間、ウェイクロックを使用する</string>
 </resources>
