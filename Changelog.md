@@ -1,5 +1,8 @@
 # Changelog
 
+## v1.2.12
+ * Fixed a bug which would reschedule on every launch
+
 ## v1.2.11
  * Updated japanese translation
 
