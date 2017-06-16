@@ -12,6 +12,7 @@ import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
 import android.text.style.TypefaceSpan;
+import android.util.Base64;
 import android.util.Log;
 
 import com.cronutils.descriptor.CronDescriptor;
@@ -75,7 +76,7 @@ class Crond {
         try {
             MessageDigest messageDigest = MessageDigest.getInstance(HASH_ALGO);
             messageDigest.update(crontab.getBytes());
-            hashedTab = new String(messageDigest.digest());
+            hashedTab = Base64.encodeToString(messageDigest.digest(), Base64.DEFAULT).trim();
         }
         catch (NoSuchAlgorithmException e) {
             Log.e(TAG, String.format("Algorithm %s not found:", HASH_ALGO));
