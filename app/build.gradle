@@ -57,16 +57,22 @@ def keystorePropertiesFile = rootProject.file("keystore.properties")
 def keystoreProperties = new Properties()
 
 if (keystorePropertiesFile.exists()) {
+    project.setProperty("keyFile")
     keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 }
 
 android {
     signingConfigs {
-        release {
-            keyAlias keystoreProperties['keyAlias']
-            keyPassword keystoreProperties['keyPassword']
-            storeFile file(keystoreProperties['storeFile'])
-            storePassword keystoreProperties['storePassword']
+        if (project.hasProperty("keyFile")) {
+            release {
+                keyAlias keystoreProperties['keyAlias']
+                keyPassword keystoreProperties['keyPassword']
+                storeFile file(keystoreProperties['storeFile'])
+                storePassword keystoreProperties['storePassword']
+            }
+        }
+        else {
+            release {}
         }
     }
     compileSdkVersion 25
