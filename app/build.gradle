@@ -10,7 +10,7 @@ def computeVersionCode = { ->
         return Integer.parseInt(stdout.toString().trim())
     }
     catch (ignored) {
-        return -1;
+        return -1
     }
 }
 
@@ -24,14 +24,14 @@ ext.computeVersionName = { ->
         return stdout.toString().trim()
     }
     catch (ignored) {
-        return null;
+        return null
     }
 }
 
 def renameApk(variant, defaultConfig) {
-    variant.outputs.each { output ->
+    variant.outputs.all { output ->
         def buildType = ""
-        def file = output.packageApplication.outputFile
+        def file = output.outputFile
         if (file.name.contains("release")) {
             buildType = "release"
         } else {
@@ -48,7 +48,7 @@ def renameApk(variant, defaultConfig) {
             fileName += defaultConfig.versionName + "-"
             fileName += buildType + ".apk"
         }
-        output.packageApplication.outputFile = new File(file.parent, fileName)
+        output.outputFileName = fileName
     }
 }
 
@@ -75,12 +75,11 @@ android {
             release {}
         }
     }
-    compileSdkVersion 25
-    buildToolsVersion "26.0.0"
+    compileSdkVersion 26
     defaultConfig {
         applicationId "it.faerb.crond"
         minSdkVersion 21
-        targetSdkVersion 23
+        targetSdkVersion 25
         versionCode 16
         versionName "v1.2.12"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -117,13 +116,14 @@ android {
 }
 
 repositories {
-    mavenCentral()
+    jcenter()
+    google()
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:25.3.1'
-    compile 'com.cronutils:cron-utils:4.1.3'
-    compile 'eu.chainfire:libsuperuser:1.0.0.201704021214'
-    compile 'com.google.guava:guava:22.0-android'
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    api 'com.android.support:appcompat-v7:26.1.0'
+    api 'com.cronutils:cron-utils:4.1.3'
+    api 'eu.chainfire:libsuperuser:1.0.0.201704021214'
+    api 'com.google.guava:guava:22.0-android'
 }
