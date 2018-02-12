@@ -1,5 +1,6 @@
 package it.faerb.crond;
 
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -19,6 +20,7 @@ public class AlarmReceiver extends BroadcastReceiver {
     private PowerManager.WakeLock wakeLock = null;
     private SharedPreferences sharedPrefs = null;
 
+    @SuppressLint("WakelockTimeout")
     @Override
     public void onReceive(Context context, Intent intent) {
         sharedPrefs = context.getSharedPreferences(PREFERENCES_FILE,
@@ -31,22 +33,16 @@ public class AlarmReceiver extends BroadcastReceiver {
         new LineExecutor(context).execute(intent);
     }
 
-    private abstract class CrondAsyncTask extends AsyncTask<Intent, Void, Void> {
+    private class LineExecutor extends AsyncTask<Intent, Void, Void> {
         private Context context = null;
 
-        public CrondAsyncTask(Context context) {
-            this.context = context;
-        }
-    }
-
-    private class LineExecutor extends CrondAsyncTask {
         public LineExecutor(Context context) {
-            super(context);
+            this.context = context;
         }
 
         @Override
         protected Void doInBackground(Intent... intent) {
-            Crond crond = new Crond(super.context);
+            Crond crond = new Crond(context);
             String line = intent[0].getExtras().getString(INTENT_EXTRA_LINE_NAME);
             int lineNo = intent[0].getExtras().getInt(INTENT_EXTRA_LINE_NO_NAME);
             crond.executeLine(line, lineNo);

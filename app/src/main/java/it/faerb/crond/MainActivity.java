@@ -65,22 +65,22 @@ public class MainActivity extends AppCompatActivity {
         crond = new Crond(this);
         sharedPrefs = getSharedPreferences(PREFERENCES_FILE, MODE_PRIVATE);
 
-        LinearLayout layout = (LinearLayout) findViewById(R.id.root_layout);
+        LinearLayout layout = findViewById(R.id.root_layout);
         for (int i = 0; i<layout.getChildCount(); i++) {
             View view = layout.getChildAt(i);
             view.setEnabled(true);
             view.setVisibility(VISIBLE);
         }
-        final TextView crontabLabel = (TextView) findViewById(R.id.text_label_crontab);
+        final TextView crontabLabel = findViewById(R.id.text_label_crontab);
         crontabLabel.setText(getString(R.string.crontab_label, IO.getCrontabPath()));
 
-        final TextView crontabContent = (TextView) findViewById(R.id.text_content_crontab);
+        final TextView crontabContent = findViewById(R.id.text_content_crontab);
         crontabContent.setMovementMethod(new ScrollingMovementMethod());
 
-        final TextView crondLog = (TextView) findViewById(R.id.text_content_crond_log);
+        final TextView crondLog = findViewById(R.id.text_content_crond_log);
         crondLog.setMovementMethod(new ScrollingMovementMethod());
 
-        final CheckBox notificationCheckBox = (CheckBox) findViewById(
+        final CheckBox notificationCheckBox = findViewById(
                 R.id.check_notification_setting);
         notificationCheckBox.setChecked(sharedPrefs.getBoolean(PREF_NOTIFICATION_ENABLED, false));
         notificationCheckBox.setOnClickListener(new View.OnClickListener() {
@@ -91,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        final CheckBox wakeLockCheckBox = (CheckBox) findViewById(
+        final CheckBox wakeLockCheckBox = findViewById(
                 R.id.check_wakelock_setting);
         wakeLockCheckBox.setChecked(sharedPrefs.getBoolean(PREF_USE_WAKE_LOCK, false));
         wakeLockCheckBox.setOnClickListener(new View.OnClickListener() {
@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        final Button enableButton = (Button) findViewById(R.id.button_enable);
+        final Button enableButton = findViewById(R.id.button_enable);
         enableButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -114,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        final Button clearButton = (Button) findViewById(R.id.button_clear_log);
+        final Button clearButton = findViewById(R.id.button_clear_log);
         clearButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -159,9 +159,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void updateEnabled() {
         boolean enabled = sharedPrefs.getBoolean(PREF_ENABLED, false);
-        final TextView crontabContent = (TextView) findViewById(R.id.text_content_crontab);
-        final TextView crondLog = (TextView) findViewById(R.id.text_content_crond_log);
-        final Button enableButton = (Button) findViewById(R.id.button_enable);
+        final TextView crontabContent = findViewById(R.id.text_content_crontab);
+        final TextView crondLog = findViewById(R.id.text_content_crond_log);
+        final Button enableButton = findViewById(R.id.button_enable);
 
         if (enabled) {
             crontabContent.setBackgroundColor(Util.getColor(this, R.color.colorBackgroundActive));
@@ -214,15 +214,15 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(CharSequence[] sequences) {
-            final TextView crontabContent = (TextView) findViewById(R.id.text_content_crontab);
+            final TextView crontabContent = findViewById(R.id.text_content_crontab);
             crontabContent.setText(sequences[0]);
 
-            final TextView crondLog = (TextView) findViewById(R.id.text_content_crond_log);
+            final TextView crondLog = findViewById(R.id.text_content_crond_log);
             crondLog.setText(sequences[1]);
         }
     }
 
-    private class LogClearer extends AsyncTask<Void, Void, Void> {
+    private static class LogClearer extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... params) {
             IO.clearLogFile();
