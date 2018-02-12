@@ -13,12 +13,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.app.NotificationCompat;
 import android.text.method.ScrollingMovementMethod;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import java.lang.ref.WeakReference;
 
 import eu.chainfire.libsuperuser.Shell;
 
@@ -43,20 +44,25 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        new RootChecker().execute();
+        new RootChecker(this).execute();
     }
 
-    private class RootChecker extends AsyncTask<Void, Void, Boolean> {
+    private static class RootChecker extends AsyncTask<Void, Void, Boolean> {
+        private WeakReference<MainActivity> contextRef = null;
+
+        public RootChecker(MainActivity context) {
+            contextRef = new WeakReference<>(context);
+        }
         @Override
         protected Boolean doInBackground(Void... params) {
-            rootAvailable = Shell.SU.available();
-            return rootAvailable;
+            contextRef.get().rootAvailable = Shell.SU.available();
+            return contextRef.get().rootAvailable;
         }
 
         @Override
         protected void onPostExecute(Boolean rootAvail) {
             if (rootAvail) {
-                init();
+                contextRef.get().init();
             }
         }
     }
@@ -196,15 +202,26 @@ public class MainActivity extends AppCompatActivity {
     private final Runnable refresh = new Runnable() {
         @Override
         public void run() {
-            new FileReader().execute();
+            new FileReader(MainActivity.this).execute();
             refreshHandler.postDelayed(refresh, 10000);
         }
     };
 
-    private class FileReader extends AsyncTask<Void, Void, CharSequence[]> {
+    private static class FileReader extends AsyncTask<Void, Void, CharSequence[]> {
+        private WeakReference<MainActivity> contextRef = null;
+
+        public FileReader(MainActivity context) {
+            contextRef = new WeakReference<>(context);
+        }
+
         @Override
         protected CharSequence[] doInBackground(Void... params) {
+            MainActivity context = contextRef.get();
+            if (context == null || context.isFinishing()) {
+                cancel(true);
+            }
             CharSequence[] ret = new CharSequence[2];
+            Crond crond = context.crond;
             crond.setCrontab(IO.readFileContents(IO.getCrontabPath()));
             ret[0] = crond.processCrontab();
 
@@ -214,10 +231,14 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(CharSequence[] sequences) {
-            final TextView crontabContent = findViewById(R.id.text_content_crontab);
+            MainActivity context = contextRef.get();
+            if (context == null || context.isFinishing()) {
+                return;
+            }
+            final TextView crontabContent = context.findViewById(R.id.text_content_crontab);
             crontabContent.setText(sequences[0]);
 
-            final TextView crondLog = findViewById(R.id.text_content_crond_log);
+            final TextView crondLog = context.findViewById(R.id.text_content_crond_log);
             crondLog.setText(sequences[1]);
         }
     }

@@ -8,6 +8,8 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.PowerManager;
 
+import java.lang.ref.WeakReference;
+
 import static it.faerb.crond.Constants.INTENT_EXTRA_LINE_NAME;
 import static it.faerb.crond.Constants.INTENT_EXTRA_LINE_NO_NAME;
 import static it.faerb.crond.Constants.PREFERENCES_FILE;
@@ -17,31 +19,30 @@ public class AlarmReceiver extends BroadcastReceiver {
 
     private static final String TAG = "AlarmReceiver";
 
-    private PowerManager.WakeLock wakeLock = null;
-    private SharedPreferences sharedPrefs = null;
-
-    @SuppressLint("WakelockTimeout")
     @Override
     public void onReceive(Context context, Intent intent) {
-        sharedPrefs = context.getSharedPreferences(PREFERENCES_FILE,
-                Context.MODE_PRIVATE);
-        if (sharedPrefs.getBoolean(PREF_USE_WAKE_LOCK, false)) {
-            PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
-            wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TAG);
-            wakeLock.acquire();
-        }
         new LineExecutor(context).execute(intent);
     }
 
-    private class LineExecutor extends AsyncTask<Intent, Void, Void> {
-        private Context context = null;
+    private static class LineExecutor extends AsyncTask<Intent, Void, Void> {
+        private WeakReference<Context> contextRef = null;
 
         public LineExecutor(Context context) {
-            this.context = context;
+            contextRef = new WeakReference<>(context);
         }
 
+        @SuppressLint("WakelockTimeout")
         @Override
         protected Void doInBackground(Intent... intent) {
+            Context context = contextRef.get();
+            SharedPreferences sharedPrefs = context.getSharedPreferences(PREFERENCES_FILE,
+                    Context.MODE_PRIVATE);
+            PowerManager.WakeLock wakeLock = null;
+            if (sharedPrefs.getBoolean(PREF_USE_WAKE_LOCK, false)) {
+                PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+                wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TAG);
+                wakeLock.acquire();
+            }
             Crond crond = new Crond(context);
             String line = intent[0].getExtras().getString(INTENT_EXTRA_LINE_NAME);
             int lineNo = intent[0].getExtras().getInt(INTENT_EXTRA_LINE_NO_NAME);
